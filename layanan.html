@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layanan — Naikin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay"><div class="loader-logo">N</div><p>Menyiapkan Naikin...</p></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-brand"><span class="logo-mark">N</span> Naikin</a>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Menu</div>
+      <a href="index.html"><i data-lucide="home"></i> Beranda</a>
+      <a href="layanan.html" class="active"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="deposit.html"><i data-lucide="wallet"></i> Deposit</a>
+      <a href="account.html"><i data-lucide="user"></i> Akun</a>
+      <div class="sidebar-section">Riwayat</div>
+      <a href="account.html?tab=orders"><i data-lucide="package"></i> Riwayat Order</a>
+      <a href="account.html?tab=transactions"><i data-lucide="receipt"></i> Transaksi</a>
+      <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
+      <div class="sidebar-section">Bantuan</div>
+      <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="index.html#howitworks"><i data-lucide="workflow"></i> Cara Kerja</a>
+    </nav>
+    <div class="sidebar-footer" id="sidebarUserSlot"></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Menu"><i data-lucide="menu"></i></button>
+        <span class="topbar-title">Layanan</span>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Tema"><i data-lucide="moon"></i></button>
+        <div id="navUserSlot"></div>
+      </div>
+    </header>
+    <div class="page-content">
+      <section class="section" id="categories" style="padding-top:12px;padding-bottom:12px">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow"><i data-lucide="layout-grid" style="width:13px;height:13px"></i> Kategori</span>
+            <h2 class="section-title">Pilih platform kamu</h2>
+            <p class="section-desc">Social media, WhatsApp, sampai aplikasi premium — semua ada.</p>
+          </div>
+          <div class="cat-grid" id="catGrid"></div>
+        </div>
+      </section>
+      <section class="section" id="catalog" style="padding-top:0">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow"><i data-lucide="shopping-bag" style="width:13px;height:13px"></i> Katalog</span>
+            <h2 class="section-title">Semua Layanan</h2>
+            <p class="section-desc">Custom quantity untuk followers/likes/views. Harga murah + diskon.</p>
+          </div>
+          <div class="toolbar">
+            <div class="search-box">
+              <i data-lucide="search" class="ic" style="width:18px;height:18px"></i>
+              <input type="text" id="searchInput" placeholder="Cari layanan...">
+            </div>
+            <select class="sort-select" id="sortSelect">
+              <option value="default">Urutkan: Default</option>
+              <option value="cheap">Harga termurah</option>
+              <option value="expensive">Harga termahal</option>
+              <option value="popular">Terpopuler</option>
+            </select>
+          </div>
+          <div class="filter-scroll" id="filterScroll">
+            <button class="chip active" data-filter="all">Semua</button>
+            <button class="chip" data-filter="social">Social Media</button>
+            <button class="chip" data-filter="apps">Premium Apps</button>
+            <button class="chip" data-filter="trending">Trending</button>
+            <button class="chip" data-filter="popular">Popular</button>
+          </div>
+          <div class="product-grid" id="productGrid"></div>
+        </div>
+      </section>
+    </div>
+    <footer class="site-footer"><div class="container"><div class="footer-bottom"><span>© 2026 Naikin.</span><span><a href="index.html">Beranda</a> · <a href="faq.html">FAQ</a></span></div></div></footer>
+  </div>
+</div>
+<div class="modal-overlay" id="modalDetail"><div class="modal-box"></div></div>
+<div class="modal-overlay" id="modalCheckout"><div class="modal-box"></div></div>
+<div class="modal-overlay" id="modalAuth"><div class="modal-box"></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/app.js"></script>
+<script>
+function getFilteredProducts(){
+  let list = [...products];
+  if(state.currentCategory !== "all") list = list.filter(p => p.category === state.currentCategory);
+  if(state.currentFilter === "social") list = list.filter(p => catGroupMap[p.category] === "social");
+  else if(state.currentFilter === "apps") list = list.filter(p => catGroupMap[p.category] === "apps");
+  else if(state.currentFilter === "trending") list = list.filter(p => p.tag === "trending");
+  else if(state.currentFilter === "popular") list = list.filter(p => p.popular || p.tag === "popular");
+  if(state.searchQuery.trim()){
+    const q = state.searchQuery.toLowerCase();
+    list = list.filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || catNameMap[p.category].toLowerCase().includes(q));
+  }
+  if(state.sortBy === "cheap") list.sort((a,b)=>(a.qtyType==="unit"?a.pricePerUnit*a.minQty:a.price)-(b.qtyType==="unit"?b.pricePerUnit*b.minQty:b.price));
+  else if(state.sortBy === "expensive") list.sort((a,b)=>(b.qtyType==="unit"?b.pricePerUnit*b.minQty:b.price)-(a.qtyType==="unit"?a.pricePerUnit*a.minQty:a.price));
+  else if(state.sortBy === "popular") list.sort((a,b)=>(b.popular?1:0)-(a.popular?1:0));
+  return list;
+}
+function productBadges(p){
+  let b = "";
+  const d = discountPercent(p);
+  if(d > 0) b += `<span class="badge badge-discount">-${d}%</span>`;
+  if(p.popular) b += `<span class="badge badge-popular"><i data-lucide="flame" style="width:10px;height:10px"></i>Populer</span>`;
+  if(p.new) b += `<span class="badge badge-new">Baru</span>`;
+  if(p.limited) b += `<span class="badge badge-limited">Limited</span>`;
+  return b;
+}
+function renderCategories(){
+  const grid = document.getElementById("catGrid");
+  if(!grid) return;
+  grid.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-card ${state.currentCategory===c.id?'active':''}" data-cat="${c.id}">
+      <div class="ic"><i class="${c.icon} brand-icon"></i></div>
+      <b>${c.name}</b>
+      <span>${products.filter(p=>p.category===c.id).length} layanan</span>
+    </button>`).join("");
+  grid.querySelectorAll(".cat-card").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      state.currentCategory = state.currentCategory === btn.dataset.cat ? "all" : btn.dataset.cat;
+      renderCategories(); renderProducts();
+      document.getElementById("catalog").scrollIntoView({behavior:"smooth"});
+    });
+  });
+}
+function renderProducts(){
+  const grid = document.getElementById("productGrid");
+  if(!grid) return;
+  const list = getFilteredProducts();
+  if(!list.length){
+    grid.innerHTML = `<div class="empty-state"><div class="ic"><i data-lucide="search-x" style="width:26px;height:26px"></i></div><h4>Produk tidak ketemu</h4><p>Coba kata kunci atau filter lain.</p></div>`;
+    if(window.lucide) lucide.createIcons(); return;
+  }
+  grid.innerHTML = list.map(p => {
+    let priceLabel = "";
+    if(p.qtyType === "unit"){
+      const start = calcPrice(p, p.minQty);
+      const old = calcOldPrice(p, p.minQty);
+      priceLabel = `${old > start ? `<span class="old">${formatRupiah(old)}</span>` : ""}${formatRupiah(start)}<span>mulai ${p.minQty.toLocaleString("id-ID")} ${p.unitLabel}</span>`;
+    } else {
+      priceLabel = `${p.oldPrice && p.oldPrice > p.price ? `<span class="old">${formatRupiah(p.oldPrice)}</span>` : ""}${formatRupiah(p.price)}<span>${p.duration||"Available"}</span>`;
+    }
+    return `<div class="product-card">
+      <div class="top">
+        <div class="ic" style="background:var(--primary-soft);color:var(--primary)"><i class="${catIconMap[p.category]} brand-icon"></i></div>
+        <div class="badges">${productBadges(p)}</div>
+      </div>
+      <h4>${p.name}</h4>
+      <p>${p.description}</p>
+      <div class="duration"><i data-lucide="${p.qtyType==='unit'?'sliders-horizontal':'clock'}" style="width:12px;height:12px"></i> ${p.qtyType==='unit'?`Custom ${p.minQty.toLocaleString('id-ID')}–${p.maxQty.toLocaleString('id-ID')}`:p.duration}</div>
+      <div class="price-row"><div class="price">${priceLabel}</div></div>
+      <div class="actions">
+        <button class="btn btn-ghost btn-sm" data-detail="${p.id}">Detail</button>
+        <button class="btn btn-primary btn-sm" data-order="${p.id}">Order</button>
+      </div>
+    </div>`;
+  }).join("");
+  if(window.lucide) lucide.createIcons();
+  grid.querySelectorAll("[data-detail]").forEach(b=>b.addEventListener("click",()=>openProductDetail(+b.dataset.detail)));
+  grid.querySelectorAll("[data-order]").forEach(b=>b.addEventListener("click",()=>openCheckout(+b.dataset.order)));
+}
+function renderAll(){ renderCategories(); renderProducts(); renderSidebarUser(); }
+document.getElementById("searchInput").addEventListener("input", e=>{ state.searchQuery=e.target.value; renderProducts(); });
+document.getElementById("sortSelect").addEventListener("change", e=>{ state.sortBy=e.target.value; renderProducts(); });
+document.getElementById("filterScroll").addEventListener("click", e=>{
+  const chip = e.target.closest(".chip"); if(!chip) return;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  chip.classList.add("active"); state.currentFilter=chip.dataset.filter; renderProducts();
+});
+function initApp(){ initCommon(); renderAll(); if(window.lucide) lucide.createIcons(); }
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();
+window.addEventListener("load", ()=>{ if(window.lucide) lucide.createIcons(); });
+</script>
+</body>
+</html>

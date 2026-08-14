@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Naikin - Naikin Engagement Kamu, Santai</title>
+<title>Naikin — Naikin Engagement Kamu, Santai</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
@@ -14,14 +14,13 @@
 <body>
 <div class="loader-overlay" id="loaderOverlay"><div class="loader-logo">N</div><p>Menyiapkan Naikin...</p></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
 <div class="app-shell">
   <aside class="sidebar" id="sidebar">
     <a href="index.html" class="sidebar-brand"><span class="logo-mark">N</span> Naikin</a>
     <nav class="sidebar-nav">
       <div class="sidebar-section">Menu</div>
       <a href="index.html" class="active"><i data-lucide="home"></i> Beranda</a>
-      <a href="index.html#catalog"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="layanan.html"><i data-lucide="layout-grid"></i> Layanan</a>
       <a href="deposit.html"><i data-lucide="wallet"></i> Deposit</a>
       <a href="account.html"><i data-lucide="user"></i> Akun</a>
       <div class="sidebar-section">Riwayat</div>
@@ -29,12 +28,11 @@
       <a href="account.html?tab=transactions"><i data-lucide="receipt"></i> Transaksi</a>
       <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
       <div class="sidebar-section">Bantuan</div>
-      <a href="#faq"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
       <a href="#howitworks"><i data-lucide="workflow"></i> Cara Kerja</a>
     </nav>
     <div class="sidebar-footer" id="sidebarUserSlot"></div>
   </aside>
-
   <div class="main-wrap">
     <header class="topbar" id="topbar">
       <div class="topbar-left">
@@ -46,7 +44,6 @@
         <div id="navUserSlot"></div>
       </div>
     </header>
-
     <div class="page-content">
       <section class="hero" id="hero">
         <div class="hero-decor d1"></div>
@@ -55,9 +52,9 @@
           <div>
             <div class="hero-badge"><span class="dot"><i data-lucide="sparkles" style="width:12px;height:12px"></i></span> Dipakai 12rb+ orang</div>
             <h1>Mau naikin <span class="hl">engagement?</span><br>Santai, biar kita yang urus.</h1>
-            <p>Followers, likes, views, WhatsApp channel, sampai langganan Spotify & CapCut - custom qty, harga murah, proses cepat.</p>
+            <p>Followers, likes, views, WhatsApp channel, sampai langganan Spotify & CapCut — custom qty, harga murah, proses cepat.</p>
             <div class="hero-cta">
-              <a href="#catalog" class="btn btn-primary"><i data-lucide="layout-grid" style="width:16px;height:16px"></i> Lihat Layanan</a>
+              <a href="layanan.html" class="btn btn-primary"><i data-lucide="layout-grid" style="width:16px;height:16px"></i> Lihat Layanan</a>
               <a href="deposit.html" class="btn btn-ghost"><i data-lucide="wallet" style="width:16px;height:16px"></i> Deposit</a>
             </div>
             <div class="hero-stats">
@@ -78,7 +75,6 @@
           </div>
         </div>
       </section>
-
       <section class="stats-strip">
         <div class="container stats-grid">
           <div class="item"><b>12.480+</b><span>Order sukses</span></div>
@@ -87,48 +83,6 @@
           <div class="item"><b>&lt;5 mnt</b><span>Rata-rata proses</span></div>
         </div>
       </section>
-
-      <section class="section" id="categories">
-        <div class="container">
-          <div class="section-head">
-            <span class="eyebrow"><i data-lucide="layout-grid" style="width:13px;height:13px"></i> Kategori</span>
-            <h2 class="section-title">Pilih platform kamu</h2>
-            <p class="section-desc">Social media, WhatsApp, sampai aplikasi premium - semua ada.</p>
-          </div>
-          <div class="cat-grid" id="catGrid"></div>
-        </div>
-      </section>
-
-      <section class="section" id="catalog" style="padding-top:0">
-        <div class="container">
-          <div class="section-head">
-            <span class="eyebrow"><i data-lucide="shopping-bag" style="width:13px;height:13px"></i> Katalog</span>
-            <h2 class="section-title">Semua Layanan</h2>
-            <p class="section-desc">Custom quantity untuk followers/likes/views. Harga murah + diskon.</p>
-          </div>
-          <div class="toolbar">
-            <div class="search-box">
-              <i data-lucide="search" class="ic" style="width:18px;height:18px"></i>
-              <input type="text" id="searchInput" placeholder="Cari layanan...">
-            </div>
-            <select class="sort-select" id="sortSelect">
-              <option value="default">Urutkan: Default</option>
-              <option value="cheap">Harga termurah</option>
-              <option value="expensive">Harga termahal</option>
-              <option value="popular">Terpopuler</option>
-            </select>
-          </div>
-          <div class="filter-scroll" id="filterScroll">
-            <button class="chip active" data-filter="all">Semua</button>
-            <button class="chip" data-filter="social">Social Media</button>
-            <button class="chip" data-filter="apps">Premium Apps</button>
-            <button class="chip" data-filter="trending">Trending</button>
-            <button class="chip" data-filter="popular">Popular</button>
-          </div>
-          <div class="product-grid" id="productGrid"></div>
-        </div>
-      </section>
-
       <section class="section" id="howitworks" style="background:var(--surface-2)">
         <div class="container">
           <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center">
@@ -137,24 +91,29 @@
           </div>
           <div class="steps-grid">
             <div class="step-card"><div class="num">1</div><h4>Daftar & Deposit</h4><p>Daftar gratis dapat bonus Rp5.000, lalu deposit minimal Rp10.000.</p></div>
-            <div class="step-card"><div class="num">2</div><h4>Pilih Layanan</h4><p>Pilih produk, atur quantity sesuai kebutuhan.</p></div>
+            <div class="step-card"><div class="num">2</div><h4>Pilih Layanan</h4><p>Buka halaman Layanan, pilih produk, atur quantity.</p></div>
             <div class="step-card"><div class="num">3</div><h4>Isi Target</h4><p>Masukkan username atau link, konfirmasi order.</p></div>
             <div class="step-card"><div class="num">4</div><h4>Proses Otomatis</h4><p>Pantau status di Riwayat Order.</p></div>
           </div>
+          <div style="text-align:center;margin-top:28px">
+            <a href="layanan.html" class="btn btn-primary"><i data-lucide="layout-grid" style="width:16px;height:16px"></i> Mulai Order</a>
+          </div>
         </div>
       </section>
-
-      <section class="section" id="faq">
-        <div class="container">
+      <section class="section">
+        <div class="container" style="text-align:center">
           <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center">
-            <span class="eyebrow"><i data-lucide="help-circle" style="width:13px;height:13px"></i> FAQ</span>
-            <h2 class="section-title">Pertanyaan sering ditanya</h2>
+            <span class="eyebrow"><i data-lucide="help-circle" style="width:13px;height:13px"></i> Bantuan</span>
+            <h2 class="section-title">Masih ada pertanyaan?</h2>
+            <p class="section-desc">Lihat FAQ lengkap atau langsung deposit untuk mulai order.</p>
           </div>
-          <div class="faq-list" id="faqList"></div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a href="faq.html" class="btn btn-ghost"><i data-lucide="help-circle" style="width:16px;height:16px"></i> Buka FAQ</a>
+            <a href="deposit.html" class="btn btn-primary"><i data-lucide="wallet" style="width:16px;height:16px"></i> Deposit</a>
+          </div>
         </div>
       </section>
     </div>
-
     <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
@@ -164,18 +123,18 @@
           </div>
           <div><h5>Navigasi</h5><ul>
             <li><a href="index.html">Beranda</a></li>
-            <li><a href="index.html#catalog">Layanan</a></li>
+            <li><a href="layanan.html">Layanan</a></li>
             <li><a href="deposit.html">Deposit</a></li>
             <li><a href="account.html">Akun</a></li>
           </ul></div>
           <div><h5>Kategori</h5><ul>
-            <li><a href="#catalog" data-cat-link="instagram">Instagram</a></li>
-            <li><a href="#catalog" data-cat-link="tiktok">TikTok</a></li>
-            <li><a href="#catalog" data-cat-link="whatsapp">WhatsApp</a></li>
-            <li><a href="#catalog" data-cat-link="digitalapps">Digital Apps</a></li>
+            <li><a href="layanan.html">Instagram</a></li>
+            <li><a href="layanan.html">TikTok</a></li>
+            <li><a href="layanan.html">WhatsApp</a></li>
+            <li><a href="layanan.html">Digital Apps</a></li>
           </ul></div>
           <div><h5>Lainnya</h5><ul>
-            <li><a href="#faq">FAQ</a></li>
+            <li><a href="faq.html">FAQ</a></li>
             <li><a href="#howitworks">Cara Kerja</a></li>
           </ul></div>
         </div>
@@ -187,129 +146,11 @@
     </footer>
   </div>
 </div>
-
-<div class="modal-overlay" id="modalDetail"><div class="modal-box"></div></div>
-<div class="modal-overlay" id="modalCheckout"><div class="modal-box"></div></div>
 <div class="modal-overlay" id="modalAuth"><div class="modal-box"></div></div>
 <div class="toast-wrap" id="toastWrap"></div>
-
 <script src="js/app.js"></script>
 <script>
-function getFilteredProducts(){
-  let list = [...products];
-  if(state.currentCategory !== "all") list = list.filter(p => p.category === state.currentCategory);
-  if(state.currentFilter === "social") list = list.filter(p => catGroupMap[p.category] === "social");
-  else if(state.currentFilter === "apps") list = list.filter(p => catGroupMap[p.category] === "apps");
-  else if(state.currentFilter === "trending") list = list.filter(p => p.tag === "trending");
-  else if(state.currentFilter === "popular") list = list.filter(p => p.popular || p.tag === "popular");
-  if(state.searchQuery.trim()){
-    const q = state.searchQuery.toLowerCase();
-    list = list.filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || catNameMap[p.category].toLowerCase().includes(q));
-  }
-  if(state.sortBy === "cheap") list.sort((a,b)=>(a.qtyType==="unit"?a.pricePerUnit*a.minQty:a.price)-(b.qtyType==="unit"?b.pricePerUnit*b.minQty:b.price));
-  else if(state.sortBy === "expensive") list.sort((a,b)=>(b.qtyType==="unit"?b.pricePerUnit*b.minQty:b.price)-(a.qtyType==="unit"?a.pricePerUnit*a.minQty:a.price));
-  else if(state.sortBy === "popular") list.sort((a,b)=>(b.popular?1:0)-(a.popular?1:0));
-  return list;
-}
-function productBadges(p){
-  let b = "";
-  const d = discountPercent(p);
-  if(d > 0) b += `<span class="badge badge-discount">-${d}%</span>`;
-  if(p.popular) b += `<span class="badge badge-popular"><i data-lucide="flame" style="width:10px;height:10px"></i>Populer</span>`;
-  if(p.new) b += `<span class="badge badge-new">Baru</span>`;
-  if(p.limited) b += `<span class="badge badge-limited">Limited</span>`;
-  return b;
-}
-function renderCategories(){
-  const grid = document.getElementById("catGrid");
-  if(!grid) return;
-  grid.innerHTML = CATEGORIES.map(c => `
-    <button class="cat-card ${state.currentCategory===c.id?'active':''}" data-cat="${c.id}">
-      <div class="ic"><i class="${c.icon} brand-icon"></i></div>
-      <b>${c.name}</b>
-      <span>${products.filter(p=>p.category===c.id).length} layanan</span>
-    </button>`).join("");
-  grid.querySelectorAll(".cat-card").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      state.currentCategory = state.currentCategory === btn.dataset.cat ? "all" : btn.dataset.cat;
-      renderCategories(); renderProducts();
-      document.getElementById("catalog").scrollIntoView({behavior:"smooth"});
-    });
-  });
-}
-function renderProducts(){
-  const grid = document.getElementById("productGrid");
-  if(!grid) return;
-  const list = getFilteredProducts();
-  if(!list.length){
-    grid.innerHTML = `<div class="empty-state"><div class="ic"><i data-lucide="search-x" style="width:26px;height:26px"></i></div><h4>Produk tidak ketemu</h4><p>Coba kata kunci atau filter lain.</p></div>`;
-    if(window.lucide) lucide.createIcons(); return;
-  }
-  grid.innerHTML = list.map(p => {
-    let priceLabel = "";
-    if(p.qtyType === "unit"){
-      const start = calcPrice(p, p.minQty);
-      const old = calcOldPrice(p, p.minQty);
-      priceLabel = `${old > start ? `<span class="old">${formatRupiah(old)}</span>` : ""}${formatRupiah(start)}<span>mulai ${p.minQty.toLocaleString("id-ID")} ${p.unitLabel}</span>`;
-    } else {
-      priceLabel = `${p.oldPrice && p.oldPrice > p.price ? `<span class="old">${formatRupiah(p.oldPrice)}</span>` : ""}${formatRupiah(p.price)}<span>${p.duration||"Available"}</span>`;
-    }
-    return `<div class="product-card">
-      <div class="top">
-        <div class="ic" style="background:var(--primary-soft);color:var(--primary)"><i class="${catIconMap[p.category]} brand-icon"></i></div>
-        <div class="badges">${productBadges(p)}</div>
-      </div>
-      <h4>${p.name}</h4>
-      <p>${p.description}</p>
-      <div class="duration"><i data-lucide="${p.qtyType==='unit'?'sliders-horizontal':'clock'}" style="width:12px;height:12px"></i> ${p.qtyType==='unit'?`Custom ${p.minQty.toLocaleString('id-ID')}–${p.maxQty.toLocaleString('id-ID')}`:p.duration}</div>
-      <div class="price-row"><div class="price">${priceLabel}</div></div>
-      <div class="actions">
-        <button class="btn btn-ghost btn-sm" data-detail="${p.id}">Detail</button>
-        <button class="btn btn-primary btn-sm" data-order="${p.id}">Order</button>
-      </div>
-    </div>`;
-  }).join("");
-  if(window.lucide) lucide.createIcons();
-  grid.querySelectorAll("[data-detail]").forEach(b=>b.addEventListener("click",()=>openProductDetail(+b.dataset.detail)));
-  grid.querySelectorAll("[data-order]").forEach(b=>b.addEventListener("click",()=>openCheckout(+b.dataset.order)));
-}
-const faqData = [
-  {q:"Bagaimana cara order?", a:"Daftar (bonus Rp5.000), deposit minimal Rp10.000, pilih layanan, atur quantity, isi target, konfirmasi."},
-  {q:"Kenapa harus deposit dulu?", a:"Bonus daftar belum bisa dipakai order. Deposit sekali (minimal Rp10.000) membuka akses order penuh."},
-  {q:"Bisa atur jumlah sendiri?", a:"Ya. Untuk followers, likes, views, members, dll. kamu bisa set quantity sendiri (min–max per produk)."},
-  {q:"Berapa lama proses?", a:"Rata-rata di bawah 5 menit. Status bisa dipantau di Riwayat Order."},
-  {q:"Perlu password akun?", a:"Tidak. Cukup username atau link target saja."}
-];
-function renderFaq(){
-  const list = document.getElementById("faqList");
-  if(!list) return;
-  list.innerHTML = faqData.map((f,i)=>`<div class="faq-item"><button class="faq-q">${f.q}<i data-lucide="chevron-down" class="chev" style="width:16px;height:16px"></i></button><div class="faq-a"><p>${f.a}</p></div></div>`).join("");
-  if(window.lucide) lucide.createIcons();
-  list.querySelectorAll(".faq-item").forEach(item=>{
-    item.querySelector(".faq-q").addEventListener("click",()=>{
-      const open = item.classList.contains("open");
-      list.querySelectorAll(".faq-item").forEach(i=>i.classList.remove("open"));
-      if(!open) item.classList.add("open");
-    });
-  });
-}
-function renderAll(){ renderCategories(); renderProducts(); renderSidebarUser(); renderFaq(); }
-
-document.getElementById("searchInput").addEventListener("input", e=>{ state.searchQuery=e.target.value; renderProducts(); });
-document.getElementById("sortSelect").addEventListener("change", e=>{ state.sortBy=e.target.value; renderProducts(); });
-document.getElementById("filterScroll").addEventListener("click", e=>{
-  const chip = e.target.closest(".chip"); if(!chip) return;
-  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
-  chip.classList.add("active"); state.currentFilter=chip.dataset.filter; renderProducts();
-});
-document.querySelectorAll("[data-cat-link]").forEach(el=>{
-  el.addEventListener("click", e=>{
-    e.preventDefault(); state.currentCategory=el.dataset.catLink;
-    renderCategories(); renderProducts();
-    document.getElementById("catalog").scrollIntoView({behavior:"smooth"});
-  });
-});
-
+function renderAll(){ renderSidebarUser(); }
 function initApp(){ initCommon(); renderAll(); if(window.lucide) lucide.createIcons(); }
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();
 window.addEventListener("load", ()=>{ if(window.lucide) lucide.createIcons(); });

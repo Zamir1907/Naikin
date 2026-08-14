@@ -20,7 +20,7 @@
     <nav class="sidebar-nav">
       <div class="sidebar-section">Menu</div>
       <a href="index.html"><i data-lucide="home"></i> Beranda</a>
-      <a href="index.html#catalog"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="layanan.html"><i data-lucide="layout-grid"></i> Layanan</a>
       <a href="deposit.html" class="active"><i data-lucide="wallet"></i> Deposit</a>
       <a href="account.html"><i data-lucide="user"></i> Akun</a>
       <div class="sidebar-section">Riwayat</div>
@@ -28,7 +28,7 @@
       <a href="account.html?tab=transactions"><i data-lucide="receipt"></i> Transaksi</a>
       <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
       <div class="sidebar-section">Bantuan</div>
-      <a href="index.html#faq"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
     </nav>
     <div class="sidebar-footer" id="sidebarUserSlot"></div>
   </aside>
@@ -55,7 +55,7 @@
           <div class="panel">
             <h3><i data-lucide="banknote" style="width:18px;height:18px"></i> Pilih Nominal</h3>
             <div class="amount-grid" id="amountGrid"></div>
-            <div class="custom-amount"><span>Rp</span><input type="number" id="customAmount" placeholder="Custom, min Rp5.000" min="5000"></div>
+            <div class="custom-amount"><span>Rp</span><input type="number" id="customAmount" placeholder="Custom, min Rp10.000" min="10000"></div>
             <button class="btn btn-primary btn-block" id="depositContinueBtn"><i data-lucide="arrow-right" style="width:16px;height:16px"></i> Lanjutkan</button>
           </div>
           <div class="panel">
@@ -103,7 +103,7 @@ function renderDepositUI(){
 document.getElementById("customAmount").addEventListener("input", e=>{ state.selectedDepositAmount = parseInt(e.target.value) || 0; document.querySelectorAll(".amount-btn").forEach(b=>b.classList.remove("active")); });
 document.getElementById("depositContinueBtn").addEventListener("click", ()=>{
   const amount = state.selectedDepositAmount;
-  if(!amount || amount < MIN_DEPOSIT){ showToast("Minimal deposit Rp5.000.", "error"); return; }
+  if(!amount || amount < MIN_DEPOSIT){ showToast("Minimal deposit Rp10.000.", "error"); return; }
   if(!getCurrentUser()){ showToast("Login dulu.", "warning"); openAuthModal("login"); return; }
   if(state.selectedPayMethod !== "qris"){ showToast("Pilih QRIS.", "warning"); return; }
   openQrisModal(amount);

@@ -20,7 +20,7 @@
     <nav class="sidebar-nav">
       <div class="sidebar-section">Menu</div>
       <a href="index.html"><i data-lucide="home"></i> Beranda</a>
-      <a href="index.html#catalog"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="layanan.html"><i data-lucide="layout-grid"></i> Layanan</a>
       <a href="deposit.html"><i data-lucide="wallet"></i> Deposit</a>
       <a href="account.html" class="active"><i data-lucide="user"></i> Akun</a>
       <div class="sidebar-section">Riwayat</div>
@@ -28,7 +28,7 @@
       <a href="account.html?tab=transactions" data-side-tab="transactions"><i data-lucide="receipt"></i> Transaksi</a>
       <a href="account.html?tab=deposits" data-side-tab="deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
       <div class="sidebar-section">Bantuan</div>
-      <a href="index.html#faq"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
     </nav>
     <div class="sidebar-footer" id="sidebarUserSlot"></div>
   </aside>
@@ -59,6 +59,15 @@
 <div class="toast-wrap" id="toastWrap"></div>
 <script src="js/app.js"></script>
 <script>
+
+let historyFrom = null, historyTo = null;
+function inDateRange(ts){
+  if(!historyFrom && !historyTo) return true;
+  const d = new Date(ts); d.setHours(0,0,0,0);
+  if(historyFrom){ const f = new Date(historyFrom); f.setHours(0,0,0,0); if(d < f) return false; }
+  if(historyTo){ const to = new Date(historyTo); to.setHours(23,59,59,999); if(d > to) return false; }
+  return true;
+}
 function confirmDepositDemo(txId){
   const user = getCurrentUser(); if(!user) return;
   const all = getStorage(STORAGE_KEYS.transactions, {});
@@ -80,10 +89,10 @@ function renderAccountArea(){
     area.innerHTML = `<div class="guest-box"><div class="ic"><i data-lucide="user-circle" style="width:26px;height:26px"></i></div><h3>Kamu masih guest</h3><p>Login atau daftar (bonus Rp5.000) biar saldo & riwayat tersimpan.</p><div class="btns"><button class="btn btn-primary" onclick="openAuthModal('login')"><i data-lucide="log-in" style="width:15px;height:15px"></i> Login</button><button class="btn btn-ghost" onclick="openAuthModal('register')"><i data-lucide="user-plus" style="width:15px;height:15px"></i> Daftar</button></div></div>`;
     if(window.lucide) lucide.createIcons(); return;
   }
-  const orders = getOrders();
-  const transactions = getTransactions();
-  const deposits = getDeposits();
-  const purchases = getPurchases();
+  const orders = getOrders().filter(o=>inDateRange(o.date));
+  const transactions = getTransactions().filter(x=>inDateRange(x.date));
+  const deposits = getDeposits().filter(x=>inDateRange(x.date));
+  const purchases = getPurchases().filter(x=>inDateRange(x.date));
   const completed = orders.filter(o=>o.status==="Completed").length;
   const pending = orders.filter(o=>o.status==="Pending"||o.status==="Processing").length;
   const params = new URLSearchParams(location.search);
@@ -115,6 +124,12 @@ function renderAccountArea(){
           <button class="tab-btn ${state.accountTab==='deposits'?'active':''}" data-tab="deposits">Deposit</button>
           <button class="tab-btn ${state.accountTab==='purchases'?'active':''}" data-tab="purchases">Pembelian</button>
         </div>
+        <div class="history-filters">
+          <input type="date" id="filterFrom" title="Dari tanggal">
+          <input type="date" id="filterTo" title="Sampai tanggal">
+          <button class="chip" type="button" id="filterApply">Filter</button>
+          <button class="chip" type="button" id="filterReset">Reset</button>
+        </div>
         <div class="tab-panel ${state.accountTab==='orders'?'active':''}" id="panel-orders" style="${state.accountTab==='orders'?'':'display:none'}">
           ${orders.length===0?emptyBox("package","Belum ada order","Order kamu akan muncul di sini."):orders.map(o=>`
             <div class="order-item">
@@ -142,6 +157,13 @@ function renderAccountArea(){
       renderAccountArea();
     });
   });
+  const fromEl = document.getElementById("filterFrom");
+  const toEl = document.getElementById("filterTo");
+  if(fromEl){ fromEl.value = historyFrom || ""; toEl.value = historyTo || ""; }
+  const apply = document.getElementById("filterApply");
+  const reset = document.getElementById("filterReset");
+  if(apply) apply.addEventListener("click", ()=>{ historyFrom = fromEl.value || null; historyTo = toEl.value || null; renderAccountArea(); });
+  if(reset) reset.addEventListener("click", ()=>{ historyFrom = null; historyTo = null; renderAccountArea(); });
 }
 function emptyBox(icon, title, desc){
   return `<div class="empty-state" style="padding:36px 16px"><div class="ic"><i data-lucide="${icon}" style="width:22px;height:22px"></i></div><h4>${title}</h4><p>${desc}</p></div>`;

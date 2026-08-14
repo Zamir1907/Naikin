@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Naikin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay"><div class="loader-logo">N</div><p>Menyiapkan Naikin...</p></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-brand"><span class="logo-mark">N</span> Naikin</a>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Menu</div>
+      <a href="index.html"><i data-lucide="home"></i> Beranda</a>
+      <a href="layanan.html"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="deposit.html"><i data-lucide="wallet"></i> Deposit</a>
+      <a href="account.html"><i data-lucide="user"></i> Akun</a>
+      <div class="sidebar-section">Riwayat</div>
+      <a href="account.html?tab=orders"><i data-lucide="package"></i> Riwayat Order</a>
+      <a href="account.html?tab=transactions"><i data-lucide="receipt"></i> Transaksi</a>
+      <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
+      <div class="sidebar-section">Bantuan</div>
+      <a href="faq.html" class="active"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="index.html#howitworks"><i data-lucide="workflow"></i> Cara Kerja</a>
+    </nav>
+    <div class="sidebar-footer" id="sidebarUserSlot"></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Menu"><i data-lucide="menu"></i></button>
+        <span class="topbar-title">FAQ</span>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Tema"><i data-lucide="moon"></i></button>
+        <div id="navUserSlot"></div>
+      </div>
+    </header>
+    <div class="page-content">
+      <div class="container">
+        <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center">
+          <span class="eyebrow"><i data-lucide="help-circle" style="width:13px;height:13px"></i> FAQ</span>
+          <h2 class="section-title">Pertanyaan sering ditanya</h2>
+          <p class="section-desc">Semua jawaban singkat seputar order, deposit, dan akun.</p>
+        </div>
+        <div class="faq-list" id="faqList"></div>
+      </div>
+    </div>
+    <footer class="site-footer"><div class="container"><div class="footer-bottom"><span>© 2026 Naikin.</span><span><a href="index.html">Beranda</a> · <a href="layanan.html">Layanan</a></span></div></div></footer>
+  </div>
+</div>
+<div class="modal-overlay" id="modalAuth"><div class="modal-box"></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/app.js"></script>
+<script>
+const faqData = [
+  {q:"Bagaimana cara order?", a:"Daftar (bonus Rp5.000), deposit minimal Rp10.000, pilih layanan di halaman Layanan, atur quantity, isi target, konfirmasi."},
+  {q:"Kenapa harus deposit dulu?", a:"Bonus daftar belum bisa dipakai order. Deposit sekali (minimal Rp10.000) membuka akses order penuh."},
+  {q:"Bisa atur jumlah sendiri?", a:"Ya. Untuk followers, likes, views, members, dll. kamu bisa set quantity sendiri (min–max per produk)."},
+  {q:"Berapa lama proses?", a:"Rata-rata di bawah 5 menit. Status bisa dipantau di Riwayat Order."},
+  {q:"Perlu password akun?", a:"Tidak. Cukup username atau link target saja."},
+  {q:"Bagaimana cara deposit?", a:"Buka halaman Deposit, pilih nominal (min Rp10.000), bayar via QRIS, lalu konfirmasi di Akun → Riwayat Deposit."},
+  {q:"Apakah data tersimpan setelah refresh?", a:"Ya, selama kamu login data saldo, order, dan transaksi tersimpan di browser kamu."}
+];
+function renderFaq(){
+  const list = document.getElementById("faqList");
+  list.innerHTML = faqData.map(f=>`<div class="faq-item"><button class="faq-q">${f.q}<i data-lucide="chevron-down" class="chev" style="width:16px;height:16px"></i></button><div class="faq-a"><p>${f.a}</p></div></div>`).join("");
+  if(window.lucide) lucide.createIcons();
+  list.querySelectorAll(".faq-item").forEach(item=>{
+    item.querySelector(".faq-q").addEventListener("click",()=>{
+      const open = item.classList.contains("open");
+      list.querySelectorAll(".faq-item").forEach(i=>i.classList.remove("open"));
+      if(!open) item.classList.add("open");
+    });
+  });
+}
+function renderAll(){ renderSidebarUser(); renderFaq(); }
+function initApp(){ initCommon(); renderAll(); }
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();
+window.addEventListener("load", ()=>{ if(window.lucide) lucide.createIcons(); });
+</script>
+</body>
+</html>

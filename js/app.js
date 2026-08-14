@@ -2,7 +2,7 @@
 const QRIS_IMAGE_URL = "https://cdn.aceimg.com/ZhkhxG9a8.jpg";
 const MERCHANT_NAME = "NAIKIN SOSMED";
 const LOGIN_BONUS = 5000;
-const MIN_DEPOSIT = 5000;
+const MIN_DEPOSIT = 10000;
 
 const STORAGE_KEYS = {
   users: "app_users",
@@ -165,6 +165,15 @@ function openModal(id, html){
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
   if(window.lucide) lucide.createIcons();
+
+  // Light content protection
+  document.addEventListener("contextmenu", e=>{
+    if(e.target.closest("input,textarea,a,button")) return;
+    e.preventDefault();
+  });
+  document.addEventListener("keydown", e=>{
+    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
+  });
 }
 function closeModal(id){
   const el = document.getElementById(id);
@@ -194,6 +203,15 @@ function updateThemeIcon(theme){
   if(!btn) return;
   btn.innerHTML = `<i data-lucide="${theme === 'dark' ? 'sun' : 'moon'}"></i>`;
   if(window.lucide) lucide.createIcons();
+
+  // Light content protection
+  document.addEventListener("contextmenu", e=>{
+    if(e.target.closest("input,textarea,a,button")) return;
+    e.preventDefault();
+  });
+  document.addEventListener("keydown", e=>{
+    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
+  });
 }
 
 /* ==================== AUTH ==================== */
@@ -291,6 +309,25 @@ function getPurchases(){
   return getTransactions().filter(t => t.type === "Purchase");
 }
 
+
+/* ==================== AUTH TRANSITION ==================== */
+function showAuthTransition(message, then){
+  let el = document.getElementById("authTransition");
+  if(!el){
+    el = document.createElement("div");
+    el.id = "authTransition";
+    el.className = "auth-transition";
+    el.innerHTML = `<div class="ring"></div><p></p>`;
+    document.body.appendChild(el);
+  }
+  el.querySelector("p").textContent = message || "Sedang masuk...";
+  el.classList.add("show");
+  setTimeout(()=>{
+    if(typeof then === "function") then();
+    else location.reload();
+  }, 1200);
+}
+
 /* ==================== AUTH MODAL ==================== */
 function openAuthModal(mode="login"){
   openModal("modalAuth", `
@@ -343,7 +380,11 @@ function openAuthModal(mode="login"){
     const username = document.getElementById("authUsername").value.trim();
     const password = document.getElementById("authPassword").value;
     let ok = currentMode === "login" ? loginUser(username, password) : registerUser(username, password);
-    if(ok){ closeModal("modalAuth"); if(typeof renderAll === "function") renderAll(); else location.reload(); }
+    if(ok){
+      closeModal("modalAuth");
+      const msg = currentMode === "login" ? "Login berhasil, menyiapkan dashboard..." : "Akun siap! Menyusun bonus & dashboard...";
+      showAuthTransition(msg, ()=>{ if(typeof renderAll === "function"){ renderAll(); const tr=document.getElementById("authTransition"); if(tr) tr.classList.remove("show"); } else location.reload(); });
+    }
   });
 }
 
@@ -372,6 +413,15 @@ function renderSidebarUser(){
     }
   }
   if(window.lucide) lucide.createIcons();
+
+  // Light content protection
+  document.addEventListener("contextmenu", e=>{
+    if(e.target.closest("input,textarea,a,button")) return;
+    e.preventDefault();
+  });
+  document.addEventListener("keydown", e=>{
+    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
+  });
 }
 
 function initSidebar(){
@@ -627,4 +677,13 @@ function initCommon(){
   }, 350);
 
   if(window.lucide) lucide.createIcons();
+
+  // Light content protection
+  document.addEventListener("contextmenu", e=>{
+    if(e.target.closest("input,textarea,a,button")) return;
+    e.preventDefault();
+  });
+  document.addEventListener("keydown", e=>{
+    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
+  });
 }
