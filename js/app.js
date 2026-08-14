@@ -1,5 +1,5 @@
 /* ==================== CONFIG ==================== */
-const QRIS_IMAGE_URL = "https://contoh-hosting.com/qris.png";
+const QRIS_IMAGE_URL = "https://cdn.aceimg.com/ZhkhxG9a8.jpg";
 const MERCHANT_NAME = "Naikin Store";
 const LOGIN_BONUS = 5000;
 const MIN_DEPOSIT = 5000;
