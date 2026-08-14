@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akun - Naikin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay"><div class="loader-logo">N</div><p>Menyiapkan Naikin...</p></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-brand"><span class="logo-mark">N</span> Naikin</a>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Menu</div>
+      <a href="index.html"><i data-lucide="home"></i> Beranda</a>
+      <a href="index.html#catalog"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="deposit.html"><i data-lucide="wallet"></i> Deposit</a>
+      <a href="account.html" class="active"><i data-lucide="user"></i> Akun</a>
+      <div class="sidebar-section">Riwayat</div>
+      <a href="account.html?tab=orders" data-side-tab="orders"><i data-lucide="package"></i> Riwayat Order</a>
+      <a href="account.html?tab=transactions" data-side-tab="transactions"><i data-lucide="receipt"></i> Transaksi</a>
+      <a href="account.html?tab=deposits" data-side-tab="deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
+      <div class="sidebar-section">Bantuan</div>
+      <a href="index.html#faq"><i data-lucide="help-circle"></i> FAQ</a>
+    </nav>
+    <div class="sidebar-footer" id="sidebarUserSlot"></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Menu"><i data-lucide="menu"></i></button>
+        <span class="topbar-title">Akun & Riwayat</span>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Tema"><i data-lucide="moon"></i></button>
+        <div id="navUserSlot"></div>
+      </div>
+    </header>
+    <div class="page-content">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow"><i data-lucide="user" style="width:13px;height:13px"></i> Akun</span>
+          <h2 class="section-title">Akun & Riwayat</h2>
+        </div>
+        <div id="accountArea"></div>
+      </div>
+    </div>
+    <footer class="site-footer"><div class="container"><div class="footer-bottom"><span>© 2026 Naikin.</span><span><a href="index.html">Beranda</a> · <a href="deposit.html">Deposit</a></span></div></div></footer>
+  </div>
+</div>
+<div class="modal-overlay" id="modalAuth"><div class="modal-box"></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/app.js"></script>
+<script>
+function confirmDepositDemo(txId){
+  const user = getCurrentUser(); if(!user) return;
+  const all = getStorage(STORAGE_KEYS.transactions, {});
+  const list = all[user.username] || [];
+  const tx = list.find(t=>t.id===txId);
+  if(tx && tx.status === "Pending"){
+    tx.status = "Completed";
+    setStorage(STORAGE_KEYS.transactions, all);
+    updateBalance(tx.amount);
+    markHasDeposited();
+    showToast(`Deposit ${formatRupiah(tx.amount)} berhasil ditambahkan.`, "success");
+    renderAll();
+  }
+}
+function renderAccountArea(){
+  const area = document.getElementById("accountArea"); if(!area) return;
+  const user = getCurrentUser();
+  if(!user){
+    area.innerHTML = `<div class="guest-box"><div class="ic"><i data-lucide="user-circle" style="width:26px;height:26px"></i></div><h3>Kamu masih guest</h3><p>Login atau daftar (bonus Rp5.000) biar saldo & riwayat tersimpan.</p><div class="btns"><button class="btn btn-primary" onclick="openAuthModal('login')"><i data-lucide="log-in" style="width:15px;height:15px"></i> Login</button><button class="btn btn-ghost" onclick="openAuthModal('register')"><i data-lucide="user-plus" style="width:15px;height:15px"></i> Daftar</button></div></div>`;
+    if(window.lucide) lucide.createIcons(); return;
+  }
+  const orders = getOrders();
+  const transactions = getTransactions();
+  const deposits = getDeposits();
+  const purchases = getPurchases();
+  const completed = orders.filter(o=>o.status==="Completed").length;
+  const pending = orders.filter(o=>o.status==="Pending"||o.status==="Processing").length;
+  const params = new URLSearchParams(location.search);
+  if(params.get("tab")) state.accountTab = params.get("tab");
+
+  area.innerHTML = `
+    <div class="account-grid">
+      <div>
+        <div class="account-card">
+          <div class="avatar-lg">${user.username.charAt(0).toUpperCase()}</div>
+          <h3>${user.username}</h3>
+          <div class="role">${user.hasDeposited ? "Member Aktif" : "Belum deposit"}</div>
+          <div class="bal-label">Saldo Kamu</div>
+          <div class="bal">${formatRupiah(user.balance)}</div>
+          <a href="deposit.html" class="btn btn-block" style="background:rgba(255,255,255,.22);color:#fff"><i data-lucide="plus" style="width:15px;height:15px"></i> Deposit</a>
+        </div>
+        <div class="account-mini-stats" style="margin-top:12px">
+          <div class="mini"><b>${orders.length}</b><span>Order</span></div>
+          <div class="mini"><b>${completed}</b><span>Selesai</span></div>
+          <div class="mini"><b>${pending}</b><span>Pending</span></div>
+        </div>
+        ${!user.hasDeposited ? `<div class="bonus-banner" style="margin-top:12px"><div class="ic"><i data-lucide="alert-triangle" style="width:16px;height:16px"></i></div><div style="font-size:12.5px">Deposit min Rp10.000 dulu untuk unlock order.</div></div>` : ""}
+        <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="logoutUser()"><i data-lucide="log-out" style="width:15px;height:15px"></i> Logout</button>
+      </div>
+      <div>
+        <div class="tabs">
+          <button class="tab-btn ${state.accountTab==='orders'?'active':''}" data-tab="orders">Order</button>
+          <button class="tab-btn ${state.accountTab==='transactions'?'active':''}" data-tab="transactions">Transaksi</button>
+          <button class="tab-btn ${state.accountTab==='deposits'?'active':''}" data-tab="deposits">Deposit</button>
+          <button class="tab-btn ${state.accountTab==='purchases'?'active':''}" data-tab="purchases">Pembelian</button>
+        </div>
+        <div class="tab-panel ${state.accountTab==='orders'?'active':''}" id="panel-orders" style="${state.accountTab==='orders'?'':'display:none'}">
+          ${orders.length===0?emptyBox("package","Belum ada order","Order kamu akan muncul di sini."):orders.map(o=>`
+            <div class="order-item">
+              <div class="ic"><i class="${catIconMap[o.category]||'fa-solid fa-box'} brand-icon"></i></div>
+              <div class="info"><b>${o.name}</b><span>${o.id} · ${o.target} · ${o.qty.toLocaleString("id-ID")} ${o.unitLabel||""} · ${formatDate(o.date)}</span></div>
+              <div class="right"><b>${formatRupiah(o.total)}</b><span class="status-pill status-${o.status.toLowerCase()}">${o.status}</span></div>
+            </div>`).join("")}
+        </div>
+        <div class="tab-panel" id="panel-transactions" style="${state.accountTab==='transactions'?'':'display:none'}">
+          ${transactions.length===0?emptyBox("receipt","Belum ada transaksi","Semua mutasi saldo muncul di sini."):transactions.map(t=>txItem(t)).join("")}
+        </div>
+        <div class="tab-panel" id="panel-deposits" style="${state.accountTab==='deposits'?'':'display:none'}">
+          ${deposits.length===0?emptyBox("arrow-down-circle","Belum ada deposit","Riwayat deposit kamu di sini."):deposits.map(t=>txItem(t)).join("")}
+        </div>
+        <div class="tab-panel" id="panel-purchases" style="${state.accountTab==='purchases'?'':'display:none'}">
+          ${purchases.length===0?emptyBox("shopping-cart","Belum ada pembelian","Riwayat pembelian layanan di sini."):purchases.map(t=>txItem(t)).join("")}
+        </div>
+      </div>
+    </div>`;
+  if(window.lucide) lucide.createIcons();
+  area.querySelectorAll("[data-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      state.accountTab = btn.dataset.tab;
+      history.replaceState(null,"",`account.html?tab=${state.accountTab}`);
+      renderAccountArea();
+    });
+  });
+}
+function emptyBox(icon, title, desc){
+  return `<div class="empty-state" style="padding:36px 16px"><div class="ic"><i data-lucide="${icon}" style="width:22px;height:22px"></i></div><h4>${title}</h4><p>${desc}</p></div>`;
+}
+function txItem(t){
+  const icon = t.type==="Deposit"?"arrow-down-circle":t.type==="Bonus"?"gift":t.type==="Refund"?"rotate-ccw":"arrow-up-circle";
+  return `<div class="tx-item">
+    <div class="ic"><i data-lucide="${icon}" style="width:18px;height:18px"></i></div>
+    <div class="info"><b>${t.type}${t.note?" · "+t.note:""}</b><span>${t.id} · ${formatDate(t.date)}</span></div>
+    <div class="right">
+      <b style="color:${t.amount<0?'var(--red)':'var(--mint)'}">${t.amount<0?'-':'+'}${formatRupiah(Math.abs(t.amount))}</b>
+      ${t.status==="Pending"?`<button class="btn btn-soft btn-sm" style="margin-top:6px" onclick="confirmDepositDemo('${t.id}')">Konfirmasi Deposit</button>`:`<span class="status-pill status-${t.status.toLowerCase()}">${t.status}</span>`}
+    </div>
+  </div>`;
+}
+function renderAll(){ renderAccountArea(); renderSidebarUser(); }
+function initApp(){
+  initCommon();
+  const params = new URLSearchParams(location.search);
+  if(params.get("tab")) state.accountTab = params.get("tab");
+  renderAll();
+  if(window.lucide) lucide.createIcons();
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();
+window.addEventListener("load", ()=>{ if(window.lucide) lucide.createIcons(); });
+</script>
+</body>
+</html>

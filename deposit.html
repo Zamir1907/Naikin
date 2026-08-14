@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit - Naikin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay"><div class="loader-logo">N</div><p>Menyiapkan Naikin...</p></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-brand"><span class="logo-mark">N</span> Naikin</a>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Menu</div>
+      <a href="index.html"><i data-lucide="home"></i> Beranda</a>
+      <a href="index.html#catalog"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="deposit.html" class="active"><i data-lucide="wallet"></i> Deposit</a>
+      <a href="account.html"><i data-lucide="user"></i> Akun</a>
+      <div class="sidebar-section">Riwayat</div>
+      <a href="account.html?tab=orders"><i data-lucide="package"></i> Riwayat Order</a>
+      <a href="account.html?tab=transactions"><i data-lucide="receipt"></i> Transaksi</a>
+      <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
+      <div class="sidebar-section">Bantuan</div>
+      <a href="index.html#faq"><i data-lucide="help-circle"></i> FAQ</a>
+    </nav>
+    <div class="sidebar-footer" id="sidebarUserSlot"></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Menu"><i data-lucide="menu"></i></button>
+        <span class="topbar-title">Deposit</span>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Tema"><i data-lucide="moon"></i></button>
+        <div id="navUserSlot"></div>
+      </div>
+    </header>
+    <div class="page-content">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow"><i data-lucide="wallet" style="width:13px;height:13px"></i> Deposit</span>
+          <h2 class="section-title">Isi saldo</h2>
+          <p class="section-desc">Minimal Rp10.000. Setelah deposit pertama, kamu bisa mulai order.</p>
+        </div>
+        <div id="depositNotice"></div>
+        <div class="deposit-wrap">
+          <div class="panel">
+            <h3><i data-lucide="banknote" style="width:18px;height:18px"></i> Pilih Nominal</h3>
+            <div class="amount-grid" id="amountGrid"></div>
+            <div class="custom-amount"><span>Rp</span><input type="number" id="customAmount" placeholder="Custom, min Rp5.000" min="5000"></div>
+            <button class="btn btn-primary btn-block" id="depositContinueBtn"><i data-lucide="arrow-right" style="width:16px;height:16px"></i> Lanjutkan</button>
+          </div>
+          <div class="panel">
+            <h3><i data-lucide="credit-card" style="width:18px;height:18px"></i> Metode Pembayaran</h3>
+            <div class="pay-methods" id="payMethods"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="site-footer"><div class="container"><div class="footer-bottom"><span>© 2026 Naikin.</span><span><a href="index.html">Beranda</a> · <a href="account.html">Akun</a></span></div></div></footer>
+  </div>
+</div>
+<div class="modal-overlay" id="modalQris"><div class="modal-box"></div></div>
+<div class="modal-overlay" id="modalAuth"><div class="modal-box"></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/app.js"></script>
+<script>
+const depositAmounts = [10000, 25000, 50000, 100000];
+const payMethodsList = [
+  { id:"qris", name:"QRIS", desc:"Scan & bayar instan", icon:"qr-code", status:"active" },
+  { id:"dana", name:"Dana", desc:"E-wallet", icon:"wallet", status:"soon" },
+  { id:"ovo", name:"OVO", desc:"E-wallet", icon:"wallet", status:"soon" },
+  { id:"gopay", name:"GoPay", desc:"E-wallet", icon:"wallet", status:"soon" },
+  { id:"bank", name:"Transfer Bank", desc:"Virtual Account", icon:"landmark", status:"soon" }
+];
+function renderDepositNotice(){
+  const el = document.getElementById("depositNotice"); if(!el) return;
+  const user = getCurrentUser();
+  if(!user) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="info" style="width:18px;height:18px"></i></div><div>Login dulu untuk deposit. <button class="btn btn-sm btn-primary" style="margin-left:8px" onclick="openAuthModal('login')">Masuk</button></div></div>`;
+  else if(!user.hasDeposited) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Bonus saldo <b>${formatRupiah(LOGIN_BONUS)}</b> sudah ada. Deposit min <b>Rp10.000</b> sekali agar bisa order.</div></div>`;
+  else el.innerHTML = "";
+  if(window.lucide) lucide.createIcons();
+}
+function renderDepositUI(){
+  const amountGrid = document.getElementById("amountGrid");
+  amountGrid.innerHTML = depositAmounts.map(a => `<button class="amount-btn ${state.selectedDepositAmount===a?'active':''}" data-amount="${a}">${formatRupiah(a)}</button>`).join("");
+  amountGrid.querySelectorAll(".amount-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ state.selectedDepositAmount = parseInt(btn.dataset.amount); document.getElementById("customAmount").value = ""; renderDepositUI(); });
+  });
+  const wrap = document.getElementById("payMethods");
+  wrap.innerHTML = payMethodsList.map(m => `<div class="pay-method ${m.status==='active'?'enabled':''} ${state.selectedPayMethod===m.id?'selected':''}" data-method="${m.id}"><div class="ic"><i data-lucide="${m.icon}" style="width:16px;height:16px"></i></div><div class="info"><b>${m.name}</b><span>${m.desc}</span></div><span class="status ${m.status==='active'?'active-s':'soon'}">${m.status==='active'?'Aktif':'Segera Hadir'}</span></div>`).join("");
+  if(window.lucide) lucide.createIcons();
+  wrap.querySelectorAll(".pay-method.enabled").forEach(el=>{ el.addEventListener("click", ()=>{ state.selectedPayMethod = el.dataset.method; renderDepositUI(); }); });
+}
+document.getElementById("customAmount").addEventListener("input", e=>{ state.selectedDepositAmount = parseInt(e.target.value) || 0; document.querySelectorAll(".amount-btn").forEach(b=>b.classList.remove("active")); });
+document.getElementById("depositContinueBtn").addEventListener("click", ()=>{
+  const amount = state.selectedDepositAmount;
+  if(!amount || amount < MIN_DEPOSIT){ showToast("Minimal deposit Rp5.000.", "error"); return; }
+  if(!getCurrentUser()){ showToast("Login dulu.", "warning"); openAuthModal("login"); return; }
+  if(state.selectedPayMethod !== "qris"){ showToast("Pilih QRIS.", "warning"); return; }
+  openQrisModal(amount);
+});
+function openQrisModal(amount){
+  const depositId = randomId("DEP");
+  openModal("modalQris", `<div class="modal-head"><h3>Bayar dengan QRIS</h3><button class="modal-close" onclick="closeModal('modalQris')"><i data-lucide="x" style="width:16px;height:16px"></i></button></div><div class="modal-body"><div class="qris-box"><img src="${QRIS_IMAGE_URL}" alt="QRIS" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22><rect width=%22180%22 height=%22180%22 fill=%22%23f0f0f0%22/><text x=%2290%22 y=%2290%22 font-size=%2212%22 text-anchor=%22middle%22 fill=%22%23999%22>QRIS</text></svg>'"><div class="nominal">${formatRupiah(amount)}</div><div class="merchant">${MERCHANT_NAME}</div><button class="btn btn-primary btn-block" id="alreadyPaidBtn"><i data-lucide="check" style="width:16px;height:16px"></i> Saya Sudah Bayar</button></div></div>`);
+  document.getElementById("alreadyPaidBtn").addEventListener("click", ()=>{
+    addTransaction({ id: depositId, type:"Deposit", amount, date: Date.now(), status:"Pending", note:"Deposit via QRIS" });
+    closeModal("modalQris");
+    showToast("Deposit pending. Konfirmasi di Akun → Riwayat Deposit.", "info", 4000);
+    state.selectedDepositAmount = 0; state.selectedPayMethod = null;
+    document.getElementById("customAmount").value = "";
+    renderDepositUI(); renderSidebarUser();
+  });
+}
+function renderAll(){ renderDepositUI(); renderDepositNotice(); renderSidebarUser(); }
+function initApp(){ initCommon(); renderAll(); if(window.lucide) lucide.createIcons(); }
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();
+window.addEventListener("load", ()=>{ if(window.lucide) lucide.createIcons(); });
+</script>
+</body>
+</html>
