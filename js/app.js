@@ -302,7 +302,7 @@ function openAuthModal(mode="login"){
       ${mode === "register" ? `
       <div class="bonus-banner">
         <div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div>
-        <div>Daftar sekarang dapat <b>bonus saldo ${formatRupiah(LOGIN_BONUS)}</b>! Setelah itu deposit minimal Rp10.000 untuk mulai order.</div>
+        <div>Daftar sekarang dapat <b>bonus saldo ${formatRupiah(LOGIN_BONUS)}</b>! Happy order.</div>
       </div>` : ""}
       <div class="tabs" style="width:100%;margin-bottom:18px">
         <button class="tab-btn ${mode==='login'?'active':''}" id="authTabLogin" style="flex:1">Login</button>
@@ -332,7 +332,7 @@ function openAuthModal(mode="login"){
     if(m === "register" && !existing){
       const banner = document.createElement("div");
       banner.className = "bonus-banner";
-      banner.innerHTML = `<div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Daftar sekarang dapat <b>bonus saldo ${formatRupiah(LOGIN_BONUS)}</b>! Setelah itu deposit minimal Rp10.000 untuk mulai order.</div>`;
+      banner.innerHTML = `<div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Daftar sekarang dapat <b>bonus saldo ${formatRupiah(LOGIN_BONUS)}</b>! Happy order.</div>`;
       body.insertBefore(banner, body.querySelector(".tabs"));
       if(window.lucide) lucide.createIcons();
     } else if(m === "login" && existing) existing.remove();
