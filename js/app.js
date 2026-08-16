@@ -1,7 +1,7 @@
 /* ==================== CONFIG ==================== */
 const QRIS_IMAGE_URL = "https://cdn.aceimg.com/ZhkhxG9a8.jpg";
 const MERCHANT_NAME = "NAIKIN SOSMED";
-const LOGIN_BONUS = 9800;
+const LOGIN_BONUS = 13800;
 const MIN_DEPOSIT = 10000;
 
 const STORAGE_KEYS = {
