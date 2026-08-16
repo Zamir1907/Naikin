@@ -139,9 +139,9 @@ function openQrisModal(amount){
         <img src="${QRIS_IMAGE_URL}" alt="QRIS" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22><rect width=%22180%22 height=%22180%22 fill=%22%23f0f0f0%22/><text x=%2290%22 y=%2290%22 font-size=%2212%22 text-anchor=%22middle%22 fill=%22%23999%22>QRIS</text></svg>'">
         <div class="nominal">${formatRupiah(amount)}</div>
         <div class="merchant">${MERCHANT_NAME}</div>
-        <p id="qrisWaitHint" style="font-size:12.5px;color:var(--text-soft);margin:0 0 12px;font-weight:600">Scan QR lalu tunggu verifikasi… <span id="qrisCountdown">${waitSec}</span>s</p>
+      
         <button class="btn btn-primary btn-block" id="alreadyPaidBtn" disabled style="opacity:.55"><i data-lucide="check" style="width:16px;height:16px"></i> Saya Sudah Bayar</button>
-        <p style="font-size:11px;color:var(--text-faint);margin-top:10px">Tombol aktif setelah ${waitSec} detik (simulasi cek pembayaran).</p>
+        
       </div>
     </div>
   `);
