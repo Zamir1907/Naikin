@@ -270,9 +270,9 @@ function submitTicket(){
   showToast("Tiket terkirim. Tim support akan meninjau.", "success");
   renderSupportArea();
 
-  // Simulasi balasan support
+  // balasan support
   setTimeout(() => {
-    updateTicketStatus(ticket.id, "Process", "Terima kasih sudah menghubungi Naikin Support. Tiket kamu sedang kami tinjau. Mohon tunggu maksimal 1x24 jam (simulasi).");
+    updateTicketStatus(ticket.id, "Process", "Terima kasih sudah menghubungi Naikin Support. Tiket kamu sedang kami tinjau. Mohon tunggu maksimal 1x24 jam.");
     if(typeof renderSupportArea === "function") renderSupportArea();
   }, 3500);
 }
