@@ -48,7 +48,7 @@
         <div class="section-head">
           <span class="eyebrow"><i data-lucide="wallet" style="width:13px;height:13px"></i> Deposit</span>
           <h2 class="section-title">Isi saldo</h2>
-          <p class="section-desc">Minimal Rp10.000. Setelah deposit pertama, kamu bisa mulai order.</p>
+          <p class="section-desc">Minimal Rp15.000. Setelah deposit pertama, kamu bisa mulai order. (bonus Rp5.000)</p>
         </div>
         <div id="depositNotice"></div>
         <div class="deposit-wrap">
@@ -85,7 +85,7 @@ function renderDepositNotice(){
   const el = document.getElementById("depositNotice"); if(!el) return;
   const user = getCurrentUser();
   if(!user) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="info" style="width:18px;height:18px"></i></div><div>Login dulu untuk deposit. <button class="btn btn-sm btn-primary" style="margin-left:8px" onclick="openAuthModal('login')">Masuk</button></div></div>`;
-  else if(!user.hasDeposited) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Bonus saldo <b>${formatRupiah(LOGIN_BONUS)}</b> sudah ada. Deposit min <b>Rp10.000</b> sekali agar bisa order.</div></div>`;
+  else if(!user.hasDeposited) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Bonus saldo <b>${formatRupiah(LOGIN_BONUS)}</b> sudah ada. Deposit min <b>Rp15.000</b> untuk order pertama (Bonus Rp5.000).</div></div>`;
   else el.innerHTML = "";
   if(window.lucide) lucide.createIcons();
 }
