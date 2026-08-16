@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support & Tiket — Naikin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay"><div class="loader-logo">N</div><p>Menyiapkan Naikin...</p></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-brand"><span class="logo-mark">N</span> Naikin</a>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Menu</div>
+      <a href="index.html"><i data-lucide="home"></i> Beranda</a>
+      <a href="layanan.html"><i data-lucide="layout-grid"></i> Layanan</a>
+      <a href="deposit.html"><i data-lucide="wallet"></i> Deposit</a>
+      <a href="account.html"><i data-lucide="user"></i> Akun</a>
+      <div class="sidebar-section">Riwayat</div>
+      <a href="account.html?tab=orders"><i data-lucide="package"></i> Riwayat Order</a>
+      <a href="account.html?tab=transactions"><i data-lucide="receipt"></i> Transaksi</a>
+      <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
+      <div class="sidebar-section">Bantuan</div>
+      <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="support.html" class="active"><i data-lucide="life-buoy"></i> Support</a>
+    </nav>
+    <div class="sidebar-footer" id="sidebarUserSlot"></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Menu"><i data-lucide="menu"></i></button>
+        <span class="topbar-title">Support</span>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Tema"><i data-lucide="moon"></i></button>
+        <div id="navUserSlot"></div>
+      </div>
+    </header>
+    <div class="page-content">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow"><i data-lucide="life-buoy" style="width:13px;height:13px"></i> Support</span>
+          <h2 class="section-title">Pusat Bantuan & Tiket</h2>
+          <p class="section-desc">Laporkan kendala order, deposit, atau akun. Sertakan screenshot agar lebih cepat diproses.</p>
+        </div>
+        <div id="supportArea"></div>
+      </div>
+    </div>
+    <footer class="site-footer"><div class="container"><div class="footer-bottom"><span>© 2026 Naikin.</span><span><a href="faq.html">FAQ</a> · <a href="account.html">Akun</a></span></div></div></footer>
+  </div>
+</div>
+<div class="modal-overlay" id="modalAuth"><div class="modal-box"></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/app.js"></script>
+<script>
+let selectedFileData = null; // {name, type, dataUrl}
+let openTicketId = null;
+
+function catLabel(id){
+  const c = (typeof TICKET_CATEGORIES !== "undefined" ? TICKET_CATEGORIES : []).find(x => x.id === id);
+  return c ? c.label : id;
+}
+
+function statusClass(s){
+  if(s === "Open") return "status-open";
+  if(s === "Process") return "status-process";
+  return "status-closed";
+}
+
+function statusText(s){
+  if(s === "Open") return "Open";
+  if(s === "Process") return "Diproses";
+  return "Selesai";
+}
+
+function renderSupportArea(){
+  const area = document.getElementById("supportArea");
+  if(!area) return;
+  const user = getCurrentUser();
+
+  if(!user){
+    area.innerHTML = `<div class="guest-box">
+      <div class="ic"><i data-lucide="life-buoy" style="width:26px;height:26px"></i></div>
+      <h3>Login untuk kirim tiket</h3>
+      <p>Masuk atau daftar dulu supaya riwayat komplain tersimpan dan bisa dilacak.</p>
+      <div class="btns">
+        <button class="btn btn-primary" onclick="openAuthModal('login')"><i data-lucide="log-in" style="width:15px;height:15px"></i> Login</button>
+        <button class="btn btn-ghost" onclick="openAuthModal('register')"><i data-lucide="user-plus" style="width:15px;height:15px"></i> Daftar</button>
+      </div>
+    </div>`;
+    if(window.lucide) lucide.createIcons();
+    return;
+  }
+
+  const tickets = getTickets();
+  const cats = typeof TICKET_CATEGORIES !== "undefined" ? TICKET_CATEGORIES : [];
+
+  area.innerHTML = `
+  <div class="support-layout">
+    <div class="panel support-form">
+      <h3><i data-lucide="plus-circle" style="width:18px;height:18px"></i> Buat Tiket Baru</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ticketCat">Kategori</label>
+          <select id="ticketCat">
+            ${cats.map(c => `<option value="${c.id}">${c.label}</option>`).join("")}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ticketRef">ID Order / Transaksi <small style="color:var(--text-faint)">(opsional)</small></label>
+          <input type="text" id="ticketRef" placeholder="contoh: ORD-XXXXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ticketSubject">Subjek</label>
+        <input type="text" id="ticketSubject" placeholder="Ringkas masalahmu" maxlength="80">
+      </div>
+      <div class="form-group">
+        <label for="ticketMsg">Pesan / Detail</label>
+        <textarea id="ticketMsg" placeholder="Jelaskan kendala, waktu kejadian, dan langkah yang sudah dicoba..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Screenshot / bukti</label>
+        <div class="file-drop" id="fileDrop">
+          <input type="file" id="ticketFile" accept="image/png,image/jpeg,image/webp,image/gif">
+          <div class="ic"><i data-lucide="image-plus" style="width:18px;height:18px"></i></div>
+          <p>Klik atau drop gambar di sini</p>
+          <span>PNG, JPG, WEBP · maks ~2MB</span>
+        </div>
+        <div class="file-preview" id="filePreview">
+          <img id="filePreviewImg" alt="preview">
+          <div class="meta"><b id="filePreviewName">file</b><span id="filePreviewSize"></span></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="fileClear">Hapus</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="submitTicketBtn"><i data-lucide="send" style="width:16px;height:16px"></i> Kirim Tiket</button>
+      <div class="support-tips">
+        <div class="tip"><i data-lucide="info" style="width:15px;height:15px"></i><span>Sertakan ID order/deposit dan screenshot supaya lebih cepat diverifikasi.</span></div>
+      
+      </div>
+    </div>
+    <div class="panel">
+      <h3><i data-lucide="inbox" style="width:18px;height:18px"></i> Tiket Saya <span style="font-weight:600;color:var(--text-faint);font-size:13px">(${tickets.length})</span></h3>
+      <div class="ticket-list" id="ticketList">
+        ${tickets.length === 0 ? `
+          <div class="empty-state" style="padding:40px 12px">
+            <div class="ic"><i data-lucide="inbox" style="width:22px;height:22px"></i></div>
+            <h4>Belum ada tiket</h4>
+            <p>Kalau ada kendala, buat tiket di formulir sebelah kiri.</p>
+          </div>` : tickets.map(tk => ticketCardHtml(tk)).join("")}
+      </div>
+    </div>
+  </div>`;
+
+  if(window.lucide) lucide.createIcons();
+  bindSupportForm();
+  bindTicketCards();
+}
+
+function ticketCardHtml(tk){
+  const isOpen = openTicketId === tk.id;
+  const replies = tk.replies || [];
+  return `
+  <div class="ticket-card ${isOpen ? "open-card" : ""}" data-tid="${tk.id}">
+    <div class="head">
+      <b>${tk.subject}</b>
+      <span class="status-pill ${statusClass(tk.status)}">${statusText(tk.status)}</span>
+    </div>
+    <div class="sub">${tk.id} · ${catLabel(tk.category)} · ${formatDate(tk.date)}${tk.ref ? " · Ref: "+tk.ref : ""}</div>
+    <div class="msg">${escapeHtml(tk.message)}</div>
+    ${isOpen ? `
+      <div class="ticket-detail">
+        <p style="font-size:13px;color:var(--text-soft);white-space:pre-wrap">${escapeHtml(tk.message)}</p>
+        ${tk.image ? `<img class="shot" src="${tk.image}" alt="Bukti">` : ""}
+        ${replies.map(r => `
+          <div class="ticket-reply">
+            <div class="who">${r.from === "support" ? "Tim Support" : "Kamu"} · ${formatDate(r.date)}</div>
+            <div>${escapeHtml(r.message)}</div>
+          </div>`).join("")}
+        ${tk.status !== "Closed" ? `<button class="btn btn-soft btn-sm" style="margin-top:10px" data-close="${tk.id}">Tandai Selesai</button>` : ""}
+      </div>` : ""}
+  </div>`;
+}
+
+function escapeHtml(s){
+  return String(s || "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+function bindSupportForm(){
+  const drop = document.getElementById("fileDrop");
+  const input = document.getElementById("ticketFile");
+  const preview = document.getElementById("filePreview");
+  const clearBtn = document.getElementById("fileClear");
+  if(!drop || !input) return;
+
+  const openPicker = () => input.click();
+  drop.addEventListener("click", openPicker);
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("drag"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("drag"));
+  drop.addEventListener("drop", e => {
+    e.preventDefault(); drop.classList.remove("drag");
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+  input.addEventListener("change", () => {
+    if(input.files && input.files[0]) handleFile(input.files[0]);
+  });
+  if(clearBtn) clearBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    selectedFileData = null;
+    input.value = "";
+    preview.classList.remove("show");
+  });
+
+  const submit = document.getElementById("submitTicketBtn");
+  if(submit) submit.addEventListener("click", submitTicket);
+}
+
+function handleFile(file){
+  if(!file.type.startsWith("image/")){
+    showToast("Hanya file gambar yang diizinkan.", "error");
+    return;
+  }
+  if(file.size > 2.2 * 1024 * 1024){
+    showToast("Ukuran gambar maksimal sekitar 2MB.", "error");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    selectedFileData = { name: file.name, type: file.type, dataUrl: reader.result, size: file.size };
+    const preview = document.getElementById("filePreview");
+    document.getElementById("filePreviewImg").src = reader.result;
+    document.getElementById("filePreviewName").textContent = file.name;
+    document.getElementById("filePreviewSize").textContent = (file.size / 1024).toFixed(0) + " KB";
+    preview.classList.add("show");
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitTicket(){
+  const user = getCurrentUser();
+  if(!user){ openAuthModal("login"); return; }
+  const category = document.getElementById("ticketCat").value;
+  const ref = document.getElementById("ticketRef").value.trim();
+  const subject = document.getElementById("ticketSubject").value.trim();
+  const message = document.getElementById("ticketMsg").value.trim();
+  if(!subject || subject.length < 4){ showToast("Subjek minimal 4 karakter.", "error"); return; }
+  if(!message || message.length < 10){ showToast("Pesan terlalu singkat. Jelaskan lebih detail.", "error"); return; }
+
+  const ticket = {
+    id: randomId("TKT"),
+    category, ref, subject, message,
+    image: selectedFileData ? selectedFileData.dataUrl : null,
+    imageName: selectedFileData ? selectedFileData.name : null,
+    status: "Open",
+    date: Date.now(),
+    updatedAt: Date.now(),
+    replies: []
+  };
+  saveTicket(ticket);
+  selectedFileData = null;
+  openTicketId = ticket.id;
+  showToast("Tiket terkirim. Tim support akan meninjau.", "success");
+  renderSupportArea();
+
+  // Simulasi balasan support
+  setTimeout(() => {
+    updateTicketStatus(ticket.id, "Process", "Terima kasih sudah menghubungi Naikin Support. Tiket kamu sedang kami tinjau. Mohon tunggu maksimal 1x24 jam (simulasi).");
+    if(typeof renderSupportArea === "function") renderSupportArea();
+  }, 3500);
+}
+
+function bindTicketCards(){
+  document.querySelectorAll(".ticket-card[data-tid]").forEach(card => {
+    card.addEventListener("click", e => {
+      if(e.target.closest("[data-close]")) return;
+      const id = card.dataset.tid;
+      openTicketId = openTicketId === id ? null : id;
+      renderSupportArea();
+    });
+  });
+  document.querySelectorAll("[data-close]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      updateTicketStatus(btn.dataset.close, "Closed", "Tiket ditandai selesai oleh pengguna.");
+      showToast("Tiket ditandai selesai.", "info");
+      renderSupportArea();
+    });
+  });
+}
+
+function renderAll(){ renderSupportArea(); renderSidebarUser(); }
+function initApp(){ initCommon(); renderAll(); if(window.lucide) lucide.createIcons(); }
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();
+window.addEventListener("load", ()=>{ if(window.lucide) lucide.createIcons(); });
+</script>
+</body>
+</html>

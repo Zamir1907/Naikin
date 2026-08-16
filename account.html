@@ -29,6 +29,7 @@
       <a href="account.html?tab=deposits" data-side-tab="deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
       <div class="sidebar-section">Bantuan</div>
       <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="support.html"><i data-lucide="life-buoy"></i> Support</a>
     </nav>
     <div class="sidebar-footer" id="sidebarUserSlot"></div>
   </aside>
@@ -86,7 +87,7 @@ function renderAccountArea(){
   const area = document.getElementById("accountArea"); if(!area) return;
   const user = getCurrentUser();
   if(!user){
-    area.innerHTML = `<div class="guest-box"><div class="ic"><i data-lucide="user-circle" style="width:26px;height:26px"></i></div><h3>Kamu masih guest</h3><p>Login atau daftar (bonus Rp5.000) biar saldo & riwayat tersimpan.</p><div class="btns"><button class="btn btn-primary" onclick="openAuthModal('login')"><i data-lucide="log-in" style="width:15px;height:15px"></i> Login</button><button class="btn btn-ghost" onclick="openAuthModal('register')"><i data-lucide="user-plus" style="width:15px;height:15px"></i> Daftar</button></div></div>`;
+    area.innerHTML = `<div class="guest-box"><div class="ic"><i data-lucide="user-circle" style="width:26px;height:26px"></i></div><h3>Kamu masih guest</h3><p>Login atau daftar (bonus otomatis) biar saldo & riwayat tersimpan.</p><div class="btns"><button class="btn btn-primary" onclick="openAuthModal('login')"><i data-lucide="log-in" style="width:15px;height:15px"></i> Login</button><button class="btn btn-ghost" onclick="openAuthModal('register')"><i data-lucide="user-plus" style="width:15px;height:15px"></i> Daftar</button></div></div>`;
     if(window.lucide) lucide.createIcons(); return;
   }
   const orders = getOrders().filter(o=>inDateRange(o.date));

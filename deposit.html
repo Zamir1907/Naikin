@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deposit - Naikin</title>
+<title>Deposit — Naikin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
@@ -29,6 +29,7 @@
       <a href="account.html?tab=deposits"><i data-lucide="arrow-down-circle"></i> Riwayat Deposit</a>
       <div class="sidebar-section">Bantuan</div>
       <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
+      <a href="support.html"><i data-lucide="life-buoy"></i> Support</a>
     </nav>
     <div class="sidebar-footer" id="sidebarUserSlot"></div>
   </aside>
@@ -48,14 +49,14 @@
         <div class="section-head">
           <span class="eyebrow"><i data-lucide="wallet" style="width:13px;height:13px"></i> Deposit</span>
           <h2 class="section-title">Isi saldo</h2>
-          <p class="section-desc">Minimal Rp15.000. Setelah deposit pertama, kamu bisa mulai order. (bonus Rp5.000)</p>
+          <p class="section-desc">Minimal Rp15.000. Setelah deposit pertama, kamu bisa mulai order.</p>
         </div>
         <div id="depositNotice"></div>
         <div class="deposit-wrap">
           <div class="panel">
             <h3><i data-lucide="banknote" style="width:18px;height:18px"></i> Pilih Nominal</h3>
             <div class="amount-grid" id="amountGrid"></div>
-            <div class="custom-amount"><span>Rp</span><input type="number" id="customAmount" placeholder="Custom, min Rp10.000" min="10000"></div>
+            <div class="custom-amount"><span>Rp</span><input type="number" id="customAmount" placeholder="Custom, min Rp15.000" min="15000" step="1000"></div>
             <button class="btn btn-primary btn-block" id="depositContinueBtn"><i data-lucide="arrow-right" style="width:16px;height:16px"></i> Lanjutkan</button>
           </div>
           <div class="panel">
@@ -73,7 +74,7 @@
 <div class="toast-wrap" id="toastWrap"></div>
 <script src="js/app.js"></script>
 <script>
-const depositAmounts = [10000, 25000, 50000, 100000];
+const depositAmounts = [15000, 25000, 50000, 100000];
 const payMethodsList = [
   { id:"qris", name:"QRIS", desc:"Scan & bayar instan", icon:"qr-code", status:"active" },
   { id:"dana", name:"Dana", desc:"E-wallet", icon:"wallet", status:"soon" },
@@ -81,14 +82,19 @@ const payMethodsList = [
   { id:"gopay", name:"GoPay", desc:"E-wallet", icon:"wallet", status:"soon" },
   { id:"bank", name:"Transfer Bank", desc:"Virtual Account", icon:"landmark", status:"soon" }
 ];
+
+let qrisOpenedAt = 0;
+let qrisTimerId = null;
+
 function renderDepositNotice(){
   const el = document.getElementById("depositNotice"); if(!el) return;
   const user = getCurrentUser();
   if(!user) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="info" style="width:18px;height:18px"></i></div><div>Login dulu untuk deposit. <button class="btn btn-sm btn-primary" style="margin-left:8px" onclick="openAuthModal('login')">Masuk</button></div></div>`;
-  else if(!user.hasDeposited) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Bonus saldo <b>${formatRupiah(LOGIN_BONUS)}</b> sudah ada. Deposit min <b>Rp15.000</b> untuk order pertama (Bonus Rp5.000).</div></div>`;
+  else if(!user.hasDeposited) el.innerHTML = `<div class="bonus-banner"><div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Bonus saldo <b>${formatRupiah(LOGIN_BONUS)}</b> sudah ada. Deposit min <b>${formatRupiah(MIN_DEPOSIT)}</b> sekali agar bisa order.</div></div>`;
   else el.innerHTML = "";
   if(window.lucide) lucide.createIcons();
 }
+
 function renderDepositUI(){
   const amountGrid = document.getElementById("amountGrid");
   amountGrid.innerHTML = depositAmounts.map(a => `<button class="amount-btn ${state.selectedDepositAmount===a?'active':''}" data-amount="${a}">${formatRupiah(a)}</button>`).join("");
@@ -100,26 +106,94 @@ function renderDepositUI(){
   if(window.lucide) lucide.createIcons();
   wrap.querySelectorAll(".pay-method.enabled").forEach(el=>{ el.addEventListener("click", ()=>{ state.selectedPayMethod = el.dataset.method; renderDepositUI(); }); });
 }
-document.getElementById("customAmount").addEventListener("input", e=>{ state.selectedDepositAmount = parseInt(e.target.value) || 0; document.querySelectorAll(".amount-btn").forEach(b=>b.classList.remove("active")); });
+
+document.getElementById("customAmount").addEventListener("input", e=>{
+  state.selectedDepositAmount = parseInt(e.target.value) || 0;
+  document.querySelectorAll(".amount-btn").forEach(b=>b.classList.remove("active"));
+});
+
 document.getElementById("depositContinueBtn").addEventListener("click", ()=>{
   const amount = state.selectedDepositAmount;
-  if(!amount || amount < MIN_DEPOSIT){ showToast("Minimal deposit Rp10.000.", "error"); return; }
+  if(!amount || amount < MIN_DEPOSIT){ showToast(`Minimal deposit ${formatRupiah(MIN_DEPOSIT)}.`, "error"); return; }
   if(!getCurrentUser()){ showToast("Login dulu.", "warning"); openAuthModal("login"); return; }
   if(state.selectedPayMethod !== "qris"){ showToast("Pilih QRIS.", "warning"); return; }
   openQrisModal(amount);
 });
+
+function clearQrisTimer(){
+  if(qrisTimerId){ clearInterval(qrisTimerId); qrisTimerId = null; }
+}
+
 function openQrisModal(amount){
   const depositId = randomId("DEP");
-  openModal("modalQris", `<div class="modal-head"><h3>Bayar dengan QRIS</h3><button class="modal-close" onclick="closeModal('modalQris')"><i data-lucide="x" style="width:16px;height:16px"></i></button></div><div class="modal-body"><div class="qris-box"><img src="${QRIS_IMAGE_URL}" alt="QRIS" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22><rect width=%22180%22 height=%22180%22 fill=%22%23f0f0f0%22/><text x=%2290%22 y=%2290%22 font-size=%2212%22 text-anchor=%22middle%22 fill=%22%23999%22>QRIS</text></svg>'"><div class="nominal">${formatRupiah(amount)}</div><div class="merchant">${MERCHANT_NAME}</div><button class="btn btn-primary btn-block" id="alreadyPaidBtn"><i data-lucide="check" style="width:16px;height:16px"></i> Saya Sudah Bayar</button></div></div>`);
-  document.getElementById("alreadyPaidBtn").addEventListener("click", ()=>{
-    addTransaction({ id: depositId, type:"Deposit", amount, date: Date.now(), status:"Pending", note:"Deposit via QRIS" });
+  qrisOpenedAt = Date.now();
+  const waitSec = Math.ceil((typeof QRIS_MIN_WAIT_MS !== "undefined" ? QRIS_MIN_WAIT_MS : 15000) / 1000);
+
+  openModal("modalQris", `
+    <div class="modal-head">
+      <h3>Bayar dengan QRIS</h3>
+      <button class="modal-close" onclick="clearQrisTimer(); closeModal('modalQris')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="qris-box">
+        <img src="${QRIS_IMAGE_URL}" alt="QRIS" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22><rect width=%22180%22 height=%22180%22 fill=%22%23f0f0f0%22/><text x=%2290%22 y=%2290%22 font-size=%2212%22 text-anchor=%22middle%22 fill=%22%23999%22>QRIS</text></svg>'">
+        <div class="nominal">${formatRupiah(amount)}</div>
+        <div class="merchant">${MERCHANT_NAME}</div>
+        <p id="qrisWaitHint" style="font-size:12.5px;color:var(--text-soft);margin:0 0 12px;font-weight:600">Scan QR lalu tunggu verifikasi… <span id="qrisCountdown">${waitSec}</span>s</p>
+        <button class="btn btn-primary btn-block" id="alreadyPaidBtn" disabled style="opacity:.55"><i data-lucide="check" style="width:16px;height:16px"></i> Saya Sudah Bayar</button>
+        <p style="font-size:11px;color:var(--text-faint);margin-top:10px">Tombol aktif setelah ${waitSec} detik (simulasi cek pembayaran).</p>
+      </div>
+    </div>
+  `);
+
+  const btn = document.getElementById("alreadyPaidBtn");
+  const countdownEl = document.getElementById("qrisCountdown");
+  const hint = document.getElementById("qrisWaitHint");
+  const needMs = typeof QRIS_MIN_WAIT_MS !== "undefined" ? QRIS_MIN_WAIT_MS : 15000;
+
+  clearQrisTimer();
+  qrisTimerId = setInterval(()=>{
+    const left = Math.max(0, Math.ceil((needMs - (Date.now() - qrisOpenedAt)) / 1000));
+    if(countdownEl) countdownEl.textContent = left;
+    if(left <= 0){
+      clearQrisTimer();
+      if(btn){ btn.disabled = false; btn.style.opacity = "1"; }
+      if(hint) hint.innerHTML = `<span style="color:var(--mint)">Pembayaran siap dikonfirmasi.</span> Klik tombol di bawah.`;
+    }
+  }, 250);
+
+  btn.addEventListener("click", ()=>{
+    const elapsed = Date.now() - qrisOpenedAt;
+    if(elapsed < needMs){
+      const sisa = Math.ceil((needMs - elapsed) / 1000);
+      showToast(`Pembayaran belum terdeteksi. Tunggu ${sisa} detik lagi.`, "warning", 3500);
+      return;
+    }
+
+    // Sukses: saldo langsung masuk
+    updateBalance(amount);
+    markHasDeposited();
+    addTransaction({
+      id: depositId,
+      type: "Deposit",
+      amount,
+      date: Date.now(),
+      status: "Completed",
+      note: "Deposit via QRIS"
+    });
+
+    clearQrisTimer();
     closeModal("modalQris");
-    showToast("Deposit pending. Konfirmasi di Akun → Riwayat Deposit.", "info", 4000);
-    state.selectedDepositAmount = 0; state.selectedPayMethod = null;
+    showToast(`Deposit ${formatRupiah(amount)} berhasil masuk ke saldo!`, "success", 4000);
+    state.selectedDepositAmount = 0;
+    state.selectedPayMethod = null;
     document.getElementById("customAmount").value = "";
-    renderDepositUI(); renderSidebarUser();
+    renderDepositUI();
+    renderDepositNotice();
+    renderSidebarUser();
   });
 }
+
 function renderAll(){ renderDepositUI(); renderDepositNotice(); renderSidebarUser(); }
 function initApp(){ initCommon(); renderAll(); if(window.lucide) lucide.createIcons(); }
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initApp); else initApp();

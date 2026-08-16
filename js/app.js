@@ -2,14 +2,16 @@
 const QRIS_IMAGE_URL = "https://cdn.aceimg.com/ZhkhxG9a8.jpg";
 const MERCHANT_NAME = "NAIKIN SOSMED";
 const LOGIN_BONUS = 13800;
-const MIN_DEPOSIT = 10000;
+const MIN_DEPOSIT = 15000;
+const QRIS_MIN_WAIT_MS = 15000; // min tunggu 15 detik sebelum konfirmasi QRIS
 
 const STORAGE_KEYS = {
   users: "app_users",
   currentUser: "app_current_user",
   theme: "app_theme",
   orders: "app_orders",
-  transactions: "app_transactions"
+  transactions: "app_transactions",
+  tickets: "app_tickets"
 };
 
 function getStorage(key, fallback){
@@ -165,15 +167,6 @@ function openModal(id, html){
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
   if(window.lucide) lucide.createIcons();
-
-  // Light content protection
-  document.addEventListener("contextmenu", e=>{
-    if(e.target.closest("input,textarea,a,button")) return;
-    e.preventDefault();
-  });
-  document.addEventListener("keydown", e=>{
-    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
-  });
 }
 function closeModal(id){
   const el = document.getElementById(id);
@@ -203,15 +196,6 @@ function updateThemeIcon(theme){
   if(!btn) return;
   btn.innerHTML = `<i data-lucide="${theme === 'dark' ? 'sun' : 'moon'}"></i>`;
   if(window.lucide) lucide.createIcons();
-
-  // Light content protection
-  document.addEventListener("contextmenu", e=>{
-    if(e.target.closest("input,textarea,a,button")) return;
-    e.preventDefault();
-  });
-  document.addEventListener("keydown", e=>{
-    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
-  });
 }
 
 /* ==================== AUTH ==================== */
@@ -241,7 +225,7 @@ function registerUser(username, password){
   setStorage(STORAGE_KEYS.users, users);
   setStorage(STORAGE_KEYS.currentUser, username);
   addTransaction({ id: randomId("TX"), type:"Bonus", amount: LOGIN_BONUS, date: Date.now(), status:"Completed", note:"Bonus daftar akun" });
-  showToast(`Selamat datang! Bonus saldo ${formatRupiah(LOGIN_BONUS)} sudah masuk. Deposit dulu minimal Rp10.000 sebelum order pertama.`, "success", 5000);
+  showToast(`Selamat datang! Bonus saldo ${formatRupiah(LOGIN_BONUS)} sudah masuk. Deposit dulu minimal Rp15.000 sebelum order pertama.`, "success", 5000);
   return true;
 }
 function loginUser(username, password){
@@ -309,6 +293,50 @@ function getPurchases(){
   return getTransactions().filter(t => t.type === "Purchase");
 }
 
+/* ==================== SUPPORT TICKETS ==================== */
+const TICKET_CATEGORIES = [
+  { id: "order", label: "Order bermasalah" },
+  { id: "deposit", label: "Deposit / saldo" },
+  { id: "refund", label: "Refund / pengembalian" },
+  { id: "account", label: "Akun / login" },
+  { id: "other", label: "Lainnya" }
+];
+
+function getTickets(){
+  const user = getCurrentUser();
+  if(!user) return [];
+  const all = getStorage(STORAGE_KEYS.tickets, {});
+  return all[user.username] || [];
+}
+
+function saveTicket(ticket){
+  const user = getCurrentUser();
+  if(!user) return false;
+  const all = getStorage(STORAGE_KEYS.tickets, {});
+  if(!all[user.username]) all[user.username] = [];
+  all[user.username].unshift(ticket);
+  setStorage(STORAGE_KEYS.tickets, all);
+  return true;
+}
+
+function updateTicketStatus(ticketId, status, reply){
+  const user = getCurrentUser();
+  if(!user) return false;
+  const all = getStorage(STORAGE_KEYS.tickets, {});
+  const list = all[user.username] || [];
+  const tx = list.find(x => x.id === ticketId);
+  if(!tx) return false;
+  tx.status = status;
+  if(reply){
+    tx.replies = tx.replies || [];
+    tx.replies.push({ from: "support", message: reply, date: Date.now() });
+  }
+  tx.updatedAt = Date.now();
+  setStorage(STORAGE_KEYS.tickets, all);
+  return true;
+}
+
+
 
 /* ==================== AUTH TRANSITION ==================== */
 function showAuthTransition(message, then){
@@ -339,7 +367,7 @@ function openAuthModal(mode="login"){
       ${mode === "register" ? `
       <div class="bonus-banner">
         <div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div>
-        <div>Daftar sekarang dapat <b>bonus saldo Rp5.000</b>!</div>
+        <div>Daftar sekarang dapat <b>bonus saldo ${formatRupiah(LOGIN_BONUS)}</b>!</div>
       </div>` : ""}
       <div class="tabs" style="width:100%;margin-bottom:18px">
         <button class="tab-btn ${mode==='login'?'active':''}" id="authTabLogin" style="flex:1">Login</button>
@@ -369,7 +397,7 @@ function openAuthModal(mode="login"){
     if(m === "register" && !existing){
       const banner = document.createElement("div");
       banner.className = "bonus-banner";
-      banner.innerHTML = `<div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Daftar sekarang dapat <b>bonus saldo Rp5.000</b>!</div>`;
+      banner.innerHTML = `<div class="ic"><i data-lucide="gift" style="width:18px;height:18px"></i></div><div>Daftar sekarang dapat <b>bonus saldo ${formatRupiah(LOGIN_BONUS)}</b>!</div>`;
       body.insertBefore(banner, body.querySelector(".tabs"));
       if(window.lucide) lucide.createIcons();
     } else if(m === "login" && existing) existing.remove();
@@ -413,15 +441,6 @@ function renderSidebarUser(){
     }
   }
   if(window.lucide) lucide.createIcons();
-
-  // Light content protection
-  document.addEventListener("contextmenu", e=>{
-    if(e.target.closest("input,textarea,a,button")) return;
-    e.preventDefault();
-  });
-  document.addEventListener("keydown", e=>{
-    if((e.ctrlKey||e.metaKey) && ["u","U","s","S"].includes(e.key)) e.preventDefault();
-  });
 }
 
 function initSidebar(){
@@ -586,7 +605,7 @@ function confirmOrder(p){
       <div class="modal-body" style="text-align:center">
         <div style="width:52px;height:52px;border-radius:50%;background:var(--yellow-soft);color:#9A6B00;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i data-lucide="wallet" style="width:22px;height:22px"></i></div>
         <p style="font-size:14px;color:var(--text-soft);margin-bottom:6px">Bonus saldo belum bisa dipakai untuk order.</p>
-        <p style="font-size:13px;color:var(--text-faint);margin-bottom:18px">Lakukan deposit minimal <b>Rp10.000</b> dulu, baru bisa order layanan.</p>
+        <p style="font-size:13px;color:var(--text-faint);margin-bottom:18px">Lakukan deposit minimal <b>Rp15.000</b> dulu, baru bisa order layanan.</p>
         <div style="display:flex;gap:10px">
           <button class="btn btn-ghost btn-block" onclick="closeModal('modalDetail')">Nanti</button>
           <a href="deposit.html" class="btn btn-primary btn-block">Deposit Sekarang</a>
