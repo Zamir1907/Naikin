@@ -41,6 +41,8 @@ const CATEGORIES = [
   {id:"spotify", name:"Spotify", icon:"fa-brands fa-spotify", group:"apps"},
   {id:"capcut", name:"CapCut", icon:"fa-solid fa-scissors", group:"apps"},
   {id:"canva", name:"Canva", icon:"fa-solid fa-palette", group:"apps"},
+  {id:"aiapps", name:"AI Apps", icon:"fa-solid fa-robot", group:"apps"},
+  {id:"meitu", name:"Meitu & Wink", icon:"fa-solid fa-wand-magic-sparkles", group:"apps"},
   {id:"digitalapps", name:"Digital Apps", icon:"fa-solid fa-mobile-screen", group:"apps"}
 ];
 
@@ -96,11 +98,32 @@ const products = [
   {id:39, category:"canva", name:"Canva Pro 6 Bulan", description:"Hemat 6 bulan.", qtyType:"fixed", duration:"6 Bulan", price:45000, oldPrice:75000},
   {id:40, category:"canva", name:"Canva Pro 1 Tahun", description:"Paket 1 tahun worth it.", qtyType:"fixed", duration:"1 Tahun", price:79000, oldPrice:130000, tag:"trending"},
   {id:41, category:"canva", name:"Canva Pro Lifetime", description:"Akses selamanya.", qtyType:"fixed", duration:"Lifetime", price:129000, oldPrice:220000, limited:true},
+  // AI Apps (harga resmi tinggi → diskon super murah)
+  {id:45, category:"aiapps", name:"ChatGPT Plus 1 Bulan", description:"Akses GPT premium, image, deep research.", qtyType:"fixed", duration:"1 Bulan", price:29000, oldPrice:349000, popular:true, tag:"trending"},
+  {id:49, category:"aiapps", name:"ChatGPT Plus 3 Bulan", description:"Paket hemat 3 bulan ChatGPT Plus.", qtyType:"fixed", duration:"3 Bulan", price:79000, oldPrice:1047000, tag:"popular"},
+  {id:50, category:"aiapps", name:"ChatGPT Plus 1 Tahun", description:"Paling hemat setahun penuh.", qtyType:"fixed", duration:"1 Tahun", price:249000, oldPrice:4188000, tag:"trending"},
+  {id:51, category:"aiapps", name:"Claude Pro 1 Bulan", description:"Claude Pro — coding & reasoning kuat.", qtyType:"fixed", duration:"1 Bulan", price:29000, oldPrice:320000, popular:true, tag:"popular"},
+  {id:52, category:"aiapps", name:"Claude Pro 3 Bulan", description:"Paket hemat Claude Pro 3 bulan.", qtyType:"fixed", duration:"3 Bulan", price:79000, oldPrice:960000},
+  {id:53, category:"aiapps", name:"Claude Pro 1 Tahun", description:"Claude Pro setahun paling worth.", qtyType:"fixed", duration:"1 Tahun", price:249000, oldPrice:2400000, tag:"trending"},
+  {id:54, category:"aiapps", name:"Gemini Advanced / AI Pro 1 Bulan", description:"Google AI Pro + Gemini + storage 5TB.", qtyType:"fixed", duration:"1 Bulan", price:25000, oldPrice:320000, popular:true, tag:"trending"},
+  {id:55, category:"aiapps", name:"Gemini Advanced 3 Bulan", description:"Paket hemat Gemini Advanced.", qtyType:"fixed", duration:"3 Bulan", price:69000, oldPrice:960000},
+  {id:56, category:"aiapps", name:"Gemini Advanced 1 Tahun", description:"Gemini Advanced setahun full.", qtyType:"fixed", duration:"1 Tahun", price:229000, oldPrice:3840000, tag:"trending"},
+  {id:57, category:"aiapps", name:"Perplexity Pro 1 Bulan", description:"AI search + research unlimited.", qtyType:"fixed", duration:"1 Bulan", price:22000, oldPrice:320000, tag:"popular"},
+  {id:58, category:"aiapps", name:"Grok Premium 1 Bulan", description:"xAI Grok — real-time & witty AI.", qtyType:"fixed", duration:"1 Bulan", price:25000, oldPrice:320000, new:true, tag:"trending"},
+  {id:59, category:"aiapps", name:"Midjourney Standard 1 Bulan", description:"Generate image AI kualitas tinggi.", qtyType:"fixed", duration:"1 Bulan", price:35000, oldPrice:480000, tag:"popular"},
+
+  // Meitu & Wink
+  {id:60, category:"meitu", name:"Meitu VIP 1 Bulan", description:"Semua fitur Pro edit foto AI Meitu.", qtyType:"fixed", duration:"1 Bulan", price:15000, oldPrice:84000, popular:true, tag:"popular"},
+  {id:61, category:"meitu", name:"Meitu VIP 3 Bulan", description:"Paket hemat Meitu VIP.", qtyType:"fixed", duration:"3 Bulan", price:39000, oldPrice:252000, tag:"trending"},
+  {id:62, category:"meitu", name:"Meitu VIP 1 Tahun", description:"Meitu VIP setahun paling murah.", qtyType:"fixed", duration:"1 Tahun", price:99000, oldPrice:439000, tag:"trending"},
+  {id:63, category:"meitu", name:"Meitu VIP+ 1 Bulan", description:"VIP+ fitur lebih lengkap + AI art.", qtyType:"fixed", duration:"1 Bulan", price:22000, oldPrice:139000, limited:true, tag:"popular"},
+  {id:64, category:"meitu", name:"Wink VIP 1 Bulan", description:"Wink by Meitu — AI video beauty & enhance.", qtyType:"fixed", duration:"1 Bulan", price:18000, oldPrice:110000, popular:true, tag:"trending"},
+  {id:65, category:"meitu", name:"Wink VIP 1 Tahun", description:"Wink VIP setahun hemat.", qtyType:"fixed", duration:"1 Tahun", price:89000, oldPrice:480000, tag:"trending"},
+
   // Digital Apps
   {id:42, category:"digitalapps", name:"Netflix Premium 1 Bulan", description:"Streaming Ultra HD.", qtyType:"fixed", duration:"1 Bulan", price:22000, oldPrice:35000, popular:true, tag:"popular"},
   {id:43, category:"digitalapps", name:"YouTube Premium 1 Bulan", description:"Tanpa iklan + YT Music.", qtyType:"fixed", duration:"1 Bulan", price:11000, oldPrice:18000, tag:"trending"},
   {id:44, category:"digitalapps", name:"Disney+ Hotstar 1 Bulan", description:"Film & series favorit.", qtyType:"fixed", duration:"1 Bulan", price:14000, oldPrice:22000, new:true},
-  {id:45, category:"digitalapps", name:"ChatGPT Plus 1 Bulan", description:"Model AI premium.", qtyType:"fixed", duration:"1 Bulan", price:45000, oldPrice:65000, tag:"trending"},
   {id:46, category:"digitalapps", name:"VPN Premium 1 Bulan", description:"Browsing aman & bebas blokir.", qtyType:"fixed", duration:"1 Bulan", price:12000, oldPrice:20000},
   {id:47, category:"digitalapps", name:"Cloud Storage 100GB", description:"Simpan file tanpa khawatir.", qtyType:"fixed", duration:"1 Bulan", price:8000, oldPrice:12000, new:true},
   {id:48, category:"digitalapps", name:"Microsoft 365 1 Tahun", description:"Word, Excel, PowerPoint + cloud.", qtyType:"fixed", duration:"1 Tahun", price:89000, oldPrice:145000, tag:"popular"}
