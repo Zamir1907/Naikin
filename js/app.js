@@ -92,7 +92,6 @@ const products = [
   {id:34, category:"capcut", name:"CapCut Pro 1 Bulan", description:"Semua fitur Pro tanpa watermark.", qtyType:"fixed", duration:"1 Bulan", price:9000, oldPrice:15000, popular:true, tag:"popular"},
   {id:35, category:"capcut", name:"CapCut Pro 3 Bulan", description:"Hemat 3 bulan.", qtyType:"fixed", duration:"3 Bulan", price:24000, oldPrice:38000, tag:"popular"},
   {id:36, category:"capcut", name:"CapCut Pro 1 Tahun", description:"Paket setahun paling hemat.", qtyType:"fixed", duration:"1 Tahun", price:75000, oldPrice:120000, tag:"trending"},
-  {id:37, category:"capcut", name:"CapCut Pro Lifetime", description:"Sekali beli, selamanya.", qtyType:"fixed", duration:"Lifetime", price:149000, oldPrice:250000, limited:true, tag:"trending"},
   // Canva
   {id:38, category:"canva", name:"Canva Pro 1 Bulan", description:"Template & elemen premium.", qtyType:"fixed", duration:"1 Bulan", price:9000, oldPrice:15000, popular:true, tag:"popular"},
   {id:39, category:"canva", name:"Canva Pro 6 Bulan", description:"Hemat 6 bulan.", qtyType:"fixed", duration:"6 Bulan", price:45000, oldPrice:75000},
@@ -113,15 +112,13 @@ const products = [
   {id:59, category:"aiapps", name:"Midjourney Standard 1 Bulan", description:"Generate image AI kualitas tinggi.", qtyType:"fixed", duration:"1 Bulan", price:35000, oldPrice:480000, tag:"popular"},
 
   // Meitu & Wink
-  {id:60, category:"meitu", name:"Meitu VIP 1 Bulan", description:"Semua fitur Pro edit foto AI Meitu.", qtyType:"fixed", duration:"1 Bulan", price:15000, oldPrice:84000, popular:true, tag:"popular"},
-  {id:61, category:"meitu", name:"Meitu VIP 3 Bulan", description:"Paket hemat Meitu VIP.", qtyType:"fixed", duration:"3 Bulan", price:39000, oldPrice:252000, tag:"trending"},
-  {id:62, category:"meitu", name:"Meitu VIP 1 Tahun", description:"Meitu VIP setahun paling murah.", qtyType:"fixed", duration:"1 Tahun", price:99000, oldPrice:439000, tag:"trending"},
-  {id:63, category:"meitu", name:"Meitu VIP+ 1 Bulan", description:"VIP+ fitur lebih lengkap + AI art.", qtyType:"fixed", duration:"1 Bulan", price:22000, oldPrice:139000, limited:true, tag:"popular"},
-  {id:64, category:"meitu", name:"Wink VIP 1 Bulan", description:"Wink by Meitu — AI video beauty & enhance.", qtyType:"fixed", duration:"1 Bulan", price:18000, oldPrice:110000, popular:true, tag:"trending"},
-  {id:65, category:"meitu", name:"Wink VIP 1 Tahun", description:"Wink VIP setahun hemat.", qtyType:"fixed", duration:"1 Tahun", price:89000, oldPrice:480000, tag:"trending"},
+  {id:60, category:"meitu", name:"Meitu Wink VIP 1 Bulan", description:"Semua fitur Pro edit foto AI Meitu.", qtyType:"fixed", duration:"1 Bulan", price:15000, oldPrice:84000, popular:true, tag:"popular"},
+  {id:61, category:"meitu", name:"Meitu Wink VIP 3 Bulan", description:"Paket hemat Meitu VIP.", qtyType:"fixed", duration:"3 Bulan", price:39000, oldPrice:252000, tag:"trending"},
+  {id:62, category:"meitu", name:"Meitu Wink VIP 1 Tahun", description:"Meitu VIP setahun paling murah.", qtyType:"fixed", duration:"1 Tahun", price:99000, oldPrice:439000, tag:"trending"},
+  {id:63, category:"meitu", name:"Meitu Wink VIP+ 1 Bulan", description:"VIP+ fitur lebih lengkap + AI art.", qtyType:"fixed", duration:"1 Bulan", price:22000, oldPrice:139000, limited:true, tag:"popular"},
 
   // Digital Apps
-  {id:42, category:"digitalapps", name:"Netflix Premium 1 Bulan", description:"Streaming Ultra HD.", qtyType:"fixed", duration:"1 Bulan", price:22000, oldPrice:35000, popular:true, tag:"popular"},
+  {id:42, category:"digitalapps", name:"Netflix Premium 1 Bulan", description:"Streaming Ultra HD.", qtyType:"fixed", duration:"1 Bulan", price:15000, oldPrice:35000, popular:true, tag:"popular"},
   {id:43, category:"digitalapps", name:"YouTube Premium 1 Bulan", description:"Tanpa iklan + YT Music.", qtyType:"fixed", duration:"1 Bulan", price:11000, oldPrice:18000, tag:"trending"},
   {id:44, category:"digitalapps", name:"Disney+ Hotstar 1 Bulan", description:"Film & series favorit.", qtyType:"fixed", duration:"1 Bulan", price:14000, oldPrice:22000, new:true},
   {id:46, category:"digitalapps", name:"VPN Premium 1 Bulan", description:"Browsing aman & bebas blokir.", qtyType:"fixed", duration:"1 Bulan", price:12000, oldPrice:20000},
