@@ -48,3 +48,14 @@ html:not([data-theme="dark"]){color-scheme:light}#sidebar{overflow-x:hidden}#sid
 
 /* Patch 014 — birthday greeting, responsive and accessible */
 .birthday-welcome{text-align:center;padding:8px 2px 4px}.birthday-mark{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:rgba(112,166,73,.12);color:#5c9838;font-size:27px;margin-bottom:8px}.birthday-kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;opacity:.7}.birthday-welcome h2{margin:8px 0 10px}.birthday-welcome p{line-height:1.6}.birthday-amount{font-size:clamp(34px,8vw,48px);font-weight:850;letter-spacing:-.04em;margin:14px auto;color:#6aa044}.birthday-dismiss{width:100%;margin-top:12px;min-height:44px}.birthday-dismiss:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+
+/* Patch 015 — compact birthday greeting */
+#modal:has(.birthday-welcome){width:min(380px,calc(100vw - 32px));max-width:380px;padding:18px 20px;border-radius:20px}
+#modal:has(.birthday-welcome) #modalBody{padding:0}
+.birthday-welcome{padding:4px 0 0;text-align:center}
+.birthday-welcome .birthday-logo{display:block;width:44px;height:44px;object-fit:contain;margin:0 auto 10px}
+.birthday-welcome h2{font-size:clamp(18px,4.8vw,21px);line-height:1.25;margin:0 0 7px}
+.birthday-welcome p{font-size:13px;line-height:1.45;margin:0 auto;max-width:285px}
+.birthday-welcome .birthday-amount{font-size:34px;line-height:1.1;margin:12px auto 14px}
+.birthday-welcome .birthday-dismiss{margin:0;min-height:42px}
+@media(max-width:480px){#modal:has(.birthday-welcome){padding:16px 18px;width:min(340px,calc(100vw - 28px))}}
