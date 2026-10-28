@@ -144,3 +144,27 @@ html[data-theme=dark] .hero .shape{color:#f1c35b!important;text-shadow:7px 7px 0
  .catalog-grid[style*="--mobile-columns: 1"] .product .bottom .primary{width:auto;flex:0 0 auto}
 }
 @media(max-width:360px){.catalog-grid{gap:8px}.catalog-grid .card{padding:10px}.catalog-grid .platform-icon{width:35px;height:35px;flex-basis:35px}}
+
+/* Patch 0003 — compact catalogue, warm notices and readable card type */
+.notice{border-left-color:#e5b64a}
+.product{gap:9px;min-height:0!important;height:auto;align-self:start}
+.product .bottom{margin-top:4px;gap:8px}
+.product .product-pricing{flex:1 1 auto}
+.product-heading .product-title h3,.product h3{font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:-.025em;line-height:1.35}
+.product .price{font-family:'DM Sans',sans-serif;font-weight:700}
+.product .tag{font-weight:500}
+.product .bottom .primary{font-weight:600}
+.product .product-description{line-height:1.45}
+.catalog-grid{align-items:start;grid-auto-rows:auto}
+.catalog-grid>.product{align-self:stretch;min-height:0!important}
+.catalog-grid .product .bottom{margin-top:5px}
+@media(max-width:700px){
+ .catalog-grid{align-items:start}
+ .catalog-grid>.product{align-self:start;height:auto;min-height:0!important}
+ .catalog-grid .product{gap:8px}
+ .catalog-grid .product .bottom{margin-top:3px;gap:7px}
+ .catalog-grid .product .bottom .primary{min-height:38px}
+ .catalog-grid .product-heading h3{font-size:clamp(13px,3.6vw,16px)}
+ .catalog-grid .product .product-description{-webkit-line-clamp:3}
+}
+html[data-theme=dark] .notice{border-left-color:#e5b64a}
